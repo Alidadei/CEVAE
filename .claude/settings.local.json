@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(python:*)",
+      "Bash(pip:*)",
+      "Bash(py -m pip install:*)",
+      "Bash(conda create:*)",
+      "Bash(where:*)",
+      "Bash(C:/Users/y/miniconda3/condabin/conda.bat create -n cevae python=3.6 -y)",
+      "Bash(C:/Users/y/miniconda3/condabin/conda.bat run -n cevae pip install:*)",
+      "Bash(C:/Users/y/miniconda3/condabin/conda.bat install:*)",
+      "Bash(C:/Users/y/miniconda3/condabin/conda.bat remove -n cevae --all -y)",
+      "Bash(C:/Users/y/miniconda3/condabin/conda.bat create -n cevae python=3.5 -y)",
+      "Bash(C:/Users/y/miniconda3/condabin/conda.bat run:*)"
+    ]
+  }
+}
