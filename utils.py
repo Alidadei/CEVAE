@@ -1,29 +1,39 @@
 import tensorflow as tf
-from tensorflow.contrib import slim
 import numpy as np
 import sys
-from tensorflow.contrib.layers.python.layers import initializers
 
 
 def fc_net(inp, layers, out_layers, scope, lamba=1e-3, activation=tf.nn.relu, reuse=None,
-           weights_initializer=initializers.xavier_initializer(uniform=False)):
-    with slim.arg_scope([slim.fully_connected],
-                        activation_fn=activation,
-                        normalizer_fn=None,
-                        weights_initializer=weights_initializer,
-                        reuse=reuse,
-                        weights_regularizer=slim.l2_regularizer(lamba)):
-
-        if layers:
-            h = slim.stack(inp, slim.fully_connected, layers, scope=scope)
-            if not out_layers:
-                return h
-        else:
-            h = inp
+           weights_initializer=tf.initializers.glorot_uniform()):
+    with tf.compat.v1.variable_scope(scope, reuse=reuse):
+        h = inp
+        for i, units in enumerate(layers):
+            weight = tf.compat.v1.get_variable(f'{scope}_dense_{i+1}_weight', 
+                                   shape=[h.get_shape().as_list()[-1], units],
+                                   initializer=weights_initializer,
+                                   regularizer=tf.keras.regularizers.l2(lamba))
+            bias = tf.compat.v1.get_variable(f'{scope}_dense_{i+1}_bias',
+                                 shape=[units],
+                                 initializer=tf.zeros_initializer())
+            h = activation(tf.matmul(h, weight) + bias)
+        
+        if not out_layers:
+            return h
+        
         outputs = []
-        for i, (outdim, activation) in enumerate(out_layers):
-            o1 = slim.fully_connected(h, outdim, activation_fn=activation, scope=scope + '_{}'.format(i + 1))
-            outputs.append(o1)
+        for i, (outdim, act) in enumerate(out_layers):
+            weight = tf.compat.v1.get_variable(f'{scope}_out_{i+1}_weight',
+                                   shape=[h.get_shape().as_list()[-1], outdim],
+                                   initializer=weights_initializer,
+                                   regularizer=tf.keras.regularizers.l2(lamba))
+            bias = tf.compat.v1.get_variable(f'{scope}_out_{i+1}_bias',
+                                 shape=[outdim],
+                                 initializer=tf.zeros_initializer())
+            if act is None:
+                output = tf.matmul(h, weight) + bias
+            else:
+                output = act(tf.matmul(h, weight) + bias)
+            outputs.append(output)
         return outputs if len(outputs) > 1 else outputs[0]
 
 
