@@ -12,7 +12,8 @@
       "Bash(C:/Users/y/miniconda3/condabin/conda.bat install:*)",
       "Bash(C:/Users/y/miniconda3/condabin/conda.bat remove -n cevae --all -y)",
       "Bash(C:/Users/y/miniconda3/condabin/conda.bat create -n cevae python=3.5 -y)",
-      "Bash(C:/Users/y/miniconda3/condabin/conda.bat run:*)"
+      "Bash(C:/Users/y/miniconda3/condabin/conda.bat run:*)",
+      "Bash(awk:*)"
     ]
   }
 }

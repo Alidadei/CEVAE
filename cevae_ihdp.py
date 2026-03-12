@@ -10,7 +10,7 @@ import tensorflow as tf
 from edward.models import Bernoulli, Normal
 from progressbar import ETA, Bar, Percentage, ProgressBar
 
-from datasets import IHDP
+from datasets import IHDP, IHDP1000, TWINS
 from evaluation import Evaluator
 import numpy as np
 import time
@@ -20,7 +20,8 @@ from utils import fc_net, get_y0_y1
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument('-reps', type=int, default=10)
+parser.add_argument('-dataset', choices=['ihdp', 'ihdp1000', 'twins'], default='ihdp', help='Dataset to use')
+parser.add_argument('-reps', type=int, default=10, help='Number of replications (for IHDP only)')
 parser.add_argument('-earl', type=int, default=10)
 parser.add_argument('-lr', type=float, default=0.001)
 parser.add_argument('-opt', choices=['adam', 'adamax'], default='adam')
@@ -30,11 +31,25 @@ args = parser.parse_args()
 
 args.true_post = True
 
+# Select dataset
+if args.dataset == 'ihdp':
+    dataset = IHDP(replications=args.reps)
+    dimx = 25
+    num_replications = args.reps
+elif args.dataset == 'ihdp1000':
+    dataset = IHDP1000()
+    dimx = 25
+    num_replications = 1  # Single large dataset
+elif args.dataset == 'twins':
+    dataset = TWINS()
+    dimx = 50  # Will be determined from data
+    num_replications = 1
 
-dataset = IHDP(replications=args.reps)
-dimx = 25
-scores = np.zeros((args.reps, 3))
-scores_test = np.zeros((args.reps, 3))
+# Model save path based on dataset
+model_path = 'models/cevae_{}'.format(args.dataset)
+
+scores = np.zeros((num_replications, 3))
+scores_test = np.zeros((num_replications, 3))
 
 M = None  # batch size during training
 d = 20  # latent dimension
@@ -42,19 +57,32 @@ lamba = 1e-4  # weight decay
 nh, h = 3, 200  # number and size of hidden layers
 
 for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_valid_test()):
-    print('\nReplication {}/{}'.format(i + 1, args.reps))
+    print('\nReplication {}/{}'.format(i + 1, num_replications))
     (xtr, ttr, ytr), (y_cftr, mu0tr, mu1tr) = train
     (xva, tva, yva), (y_cfva, mu0va, mu1va) = valid
     (xte, tte, yte), (y_cfte, mu0te, mu1te) = test
-    evaluator_test = Evaluator(yte, tte, y_cf=y_cfte, mu0=mu0te, mu1=mu1te)
+
+    # Check if dataset has counterfactuals
+    has_counterfactuals = (y_cfte is not None and mu0te is not None and mu1te is not None)
+
+    if has_counterfactuals:
+        evaluator_test = Evaluator(yte, tte, y_cf=y_cfte, mu0=mu0te, mu1=mu1te)
+    else:
+        # For datasets without counterfactuals, create a simplified evaluator
+        print('Warning: Dataset has no counterfactuals, only computing basic metrics')
+        evaluator_test = Evaluator(yte, tte)
 
     # reorder features with binary first and continuous after
     perm = binfeats + contfeats
     xtr, xva, xte = xtr[:, perm], xva[:, perm], xte[:, perm]
 
     xalltr, talltr, yalltr = np.concatenate([xtr, xva], axis=0), np.concatenate([ttr, tva], axis=0), np.concatenate([ytr, yva], axis=0)
-    evaluator_train = Evaluator(yalltr, talltr, y_cf=np.concatenate([y_cftr, y_cfva], axis=0),
-                                mu0=np.concatenate([mu0tr, mu0va], axis=0), mu1=np.concatenate([mu1tr, mu1va], axis=0))
+
+    if has_counterfactuals:
+        evaluator_train = Evaluator(yalltr, talltr, y_cf=np.concatenate([y_cftr, y_cfva], axis=0),
+                                    mu0=np.concatenate([mu0tr, mu0va], axis=0), mu1=np.concatenate([mu1tr, mu1va], axis=0))
+    else:
+        evaluator_train = Evaluator(yalltr, talltr)
 
     # zero mean, unit variance for y during training
     ym, ys = np.mean(ytr), np.std(ytr)
@@ -177,7 +205,7 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
                 if logpvalid >= best_logpvalid:
                     print('Improved validation bound, old: {:0.3f}, new: {:0.3f}'.format(best_logpvalid, logpvalid))
                     best_logpvalid = logpvalid
-                    saver.save(sess, 'models/m6-ihdp')
+                    saver.save(sess, model_path)
 
             if epoch % args.print_every == 0:
                 y0, y1 = get_y0_y1(sess, y_post, f0, f1, shape=yalltr.shape, L=1)
@@ -195,7 +223,7 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
                                            rmses_train[0], rmses_train[1], score_test[0], score_test[1], score_test[2],
                                            time.time() - t0))
 
-        saver.restore(sess, 'models/m6-ihdp')
+        saver.restore(sess, model_path)
         y0, y1 = get_y0_y1(sess, y_post, f0, f1, shape=yalltr.shape, L=100)
         y0, y1 = y0 * ys + ym, y1 * ys + ym
         score = evaluator_train.calc_stats(y1, y0)
@@ -207,12 +235,12 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
         scores_test[i, :] = score_test
 
         print('Replication: {}/{}, tr_ite: {:0.3f}, tr_ate: {:0.3f}, tr_pehe: {:0.3f}' \
-              ', te_ite: {:0.3f}, te_ate: {:0.3f}, te_pehe: {:0.3f}'.format(i + 1, args.reps,
+              ', te_ite: {:0.3f}, te_ate: {:0.3f}, te_pehe: {:0.3f}'.format(i + 1, num_replications,
                                                                             score[0], score[1], score[2],
                                                                             score_test[0], score_test[1], score_test[2]))
         sess.close()
 
-print('CEVAE model total scores')
+print('CEVAE model total scores on {}'.format(args.dataset.upper()))
 means, stds = np.mean(scores, axis=0), sem(scores, axis=0)
 print('train ITE: {:.3f}+-{:.3f}, train ATE: {:.3f}+-{:.3f}, train PEHE: {:.3f}+-{:.3f}' \
       ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))

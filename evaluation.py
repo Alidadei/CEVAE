@@ -36,6 +36,12 @@ class Evaluator(object):
         return rmse_factual, rmse_cfactual
 
     def calc_stats(self, ypred1, ypred0):
+        if self.mu0 is None or self.mu1 is None:
+            # For datasets without counterfactuals, return placeholder values
+            # Only factual outcome RMSE can be computed
+            ypred = (1 - self.t) * ypred0 + self.t * ypred1
+            rmse_factual = np.sqrt(np.mean(np.square(ypred - self.y)))
+            return rmse_factual, rmse_factual, rmse_factual  # Return RMSE as placeholder for all metrics
         ite = self.rmse_ite(ypred1, ypred0)
         ate = self.abs_ate(ypred1, ypred0)
         pehe = self.pehe(ypred1, ypred0)
