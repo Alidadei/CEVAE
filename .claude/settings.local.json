@@ -13,7 +13,13 @@
       "Bash(C:/Users/y/miniconda3/condabin/conda.bat remove -n cevae --all -y)",
       "Bash(C:/Users/y/miniconda3/condabin/conda.bat create -n cevae python=3.5 -y)",
       "Bash(C:/Users/y/miniconda3/condabin/conda.bat run:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(if not exist tests mkdir tests)",
+      "Bash(C:/Users/y/AppData/Local/Python/bin/python.exe:*)",
+      "Bash(cmd /c \"C:\\\\Users\\\\y\\\\anaconda3\\\\Scripts\\\\activate.bat cevae && python tests/analyze_ihdp1000_heterogeneity.py\")",
+      "Bash(C:/Users/y/anaconda3/envs/cevae/python.exe:*)",
+      "Bash(C:/Users/y/miniconda3/envs/cevae/python.exe:*)",
+      "Bash(ls:*)"
     ]
   }
 }

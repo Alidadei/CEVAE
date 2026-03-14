@@ -1,0 +1,33 @@
+============================================================
+CEVAE 实验记录
+============================================================
+
+【实验配置】
+------------------------------------------------------------
+数据集: ihdp1000
+模式: combined
+时间: 2026-03-13 22:49:41
+命令: python cevae_ihdp.py -dataset ihdp1000 -epochs 50 -lr 0.0005
+
+【最终结果】
+------------------------------------------------------------
+train ITE: 14.528, train ATE: 0.271, train PEHE: 9.947
+test ITE: 14.694, test ATE: 0.300, test PEHE: 10.068
+
+【训练过程】
+------------------------------------------------------------
+Replication 1/1
+Improved validation bound, old: -inf, new: -9.516
+Epoch: 1/50, log p(x) >= 13.624, ite_tr: 14.529, ate_tr: 0.063, pehe_tr: 9.960, rmse_f_tr: 16.140, rmse_cf_tr: 14.528, ite_te: 14.694, ate_te: 0.095, pehe_te: 10.082, dt: 373.686
+Improved validation bound, old: -9.516, new: -2.477
+Epoch: 11/50, log p(x) >= 3.591, ite_tr: 14.528, ate_tr: 0.261, pehe_tr: 9.949, rmse_f_tr: 16.132, rmse_cf_tr: 14.527, ite_te: 14.695, ate_te: 0.288, pehe_te: 10.072, dt: 393.219
+Improved validation bound, old: -2.477, new: -1.786
+Epoch: 21/50, log p(x) >= 2.749, ite_tr: 14.529, ate_tr: 0.270, pehe_tr: 9.955, rmse_f_tr: 16.135, rmse_cf_tr: 14.528, ite_te: 14.693, ate_te: 0.300, pehe_te: 10.076, dt: 338.141
+Epoch: 31/50, log p(x) >= 4.762, ite_tr: 14.525, ate_tr: 0.110, pehe_tr: 9.942, rmse_f_tr: 16.131, rmse_cf_tr: 14.524, ite_te: 14.692, ate_te: 0.138, pehe_te: 10.063, dt: 389.572
+Epoch: 41/50, log p(x) >= nan, ite_tr: nan, ate_tr: nan, pehe_tr: nan, rmse_f_tr: nan, rmse_cf_tr: nan, ite_te: nan, ate_te: nan, pehe_te: nan, dt: 391.110
+Replication: 1/1, tr_ite: 14.528, tr_ate: 0.271, tr_pehe: 9.947, te_ite: 14.694, te_ate: 0.300, te_pehe: 10.068
+CEVAE model total scores on IHDP1000
+train ITE: 14.528, train ATE: 0.271, train PEHE: 9.947
+test ITE: 14.694, test ATE: 0.300, test PEHE: 10.068
+
+============================================================

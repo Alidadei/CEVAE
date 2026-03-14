@@ -27,6 +27,10 @@ parser.add_argument('-lr', type=float, default=0.001)
 parser.add_argument('-opt', choices=['adam', 'adamax'], default='adam')
 parser.add_argument('-epochs', type=int, default=100)
 parser.add_argument('-print_every', type=int, default=10)
+parser.add_argument('-separate_reps', action='store_true',
+                    help='For IHDP1000: train each replication separately (like IHDP)')
+parser.add_argument('-n_reps', type=int, default=None,
+                    help='For IHDP1000: number of replications to use (default: all 1000)')
 args = parser.parse_args()
 
 args.true_post = True
@@ -37,9 +41,18 @@ if args.dataset == 'ihdp':
     dimx = 25
     num_replications = args.reps
 elif args.dataset == 'ihdp1000':
-    dataset = IHDP1000()
-    dimx = 25
-    num_replications = 1  # Single large dataset
+    # Use separate replications mode if flag is set
+    if args.separate_reps:
+        n_reps = args.n_reps if args.n_reps else 100  # Default to 100 replications for separate mode
+        dataset = IHDP1000(use_separate_replications=True, n_replications=n_reps)
+        dimx = 25
+        num_replications = n_reps
+        print('Using IHDP1000 in separate replications mode: {} replications'.format(n_reps))
+    else:
+        dataset = IHDP1000()
+        dimx = 25
+        num_replications = 1  # Single large dataset (combined mode)
+        print('Using IHDP1000 in combined mode (all replications merged)')
 elif args.dataset == 'twins':
     dataset = TWINS()
     dimx = 50  # Will be determined from data
@@ -188,7 +201,9 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
             pbar.start()
             np.random.shuffle(idx)
             for j in range(n_iter_per_epoch):
-                pbar.update(j + 1)
+                # 只在每 50 次迭代或最后一次时更新进度条，减少刷屏
+                if (j + 1) % 50 == 0 or (j + 1) == n_iter_per_epoch:
+                    pbar.update(j + 1)
                 batch = np.random.choice(idx, 100)
                 x_train, y_train, t_train = xtr[batch], ytr[batch], ttr[batch]
                 info_dict = inference.update(feed_dict={x_ph_bin: x_train[:, 0:len(binfeats)],
@@ -241,10 +256,20 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
         sess.close()
 
 print('CEVAE model total scores on {}'.format(args.dataset.upper()))
-means, stds = np.mean(scores, axis=0), sem(scores, axis=0)
-print('train ITE: {:.3f}+-{:.3f}, train ATE: {:.3f}+-{:.3f}, train PEHE: {:.3f}+-{:.3f}' \
-      ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))
+means = np.mean(scores, axis=0)
+if num_replications > 1:
+    stds = sem(scores, axis=0)
+    print('train ITE: {:.3f}+-{:.3f}, train ATE: {:.3f}+-{:.3f}, train PEHE: {:.3f}+-{:.3f}' \
+          ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))
+else:
+    print('train ITE: {:.3f}, train ATE: {:.3f}, train PEHE: {:.3f}' \
+          ''.format(means[0], means[1], means[2]))
 
-means, stds = np.mean(scores_test, axis=0), sem(scores_test, axis=0)
-print('test ITE: {:.3f}+-{:.3f}, test ATE: {:.3f}+-{:.3f}, test PEHE: {:.3f}+-{:.3f}' \
-      ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))
+means = np.mean(scores_test, axis=0)
+if num_replications > 1:
+    stds = sem(scores_test, axis=0)
+    print('test ITE: {:.3f}+-{:.3f}, test ATE: {:.3f}+-{:.3f}, test PEHE: {:.3f}+-{:.3f}' \
+          ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))
+else:
+    print('test ITE: {:.3f}, test ATE: {:.3f}, test PEHE: {:.3f}' \
+          ''.format(means[0], means[1], means[2]))

@@ -35,15 +35,34 @@ class IHDP(object):
 
 
 class IHDP1000(object):
-    """IHDP1000 dataset - larger version with ~7459 samples, pre-split train/test"""
-    def __init__(self, path_data="datasets/IHDP1000"):
+    """IHDP1000 dataset - larger version with ~7459 samples, pre-split train/test
+
+    Two modes of operation:
+    1. Combined mode (default): All replications merged into one large dataset
+    2. Per-replication mode (use_separate_replications=True): Each replication trained separately
+    """
+    def __init__(self, path_data="datasets/IHDP1000", use_separate_replications=False,
+                 n_replications=None):
+        """
+        Args:
+            path_data: Path to IHDP1000 data directory
+            use_separate_replications: If True, yield each replication separately (like IHDP)
+            n_replications: Number of replications to use (None for all 1000)
+        """
         self.path_data = path_data
+        self.use_separate_replications = use_separate_replications
+        # Limit number of replications if specified
+        self.n_replications = n_replications if n_replications else 1000
         # IHDP1000 has same feature structure as IHDP
         self.binfeats = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
         self.contfeats = [i for i in range(25) if i not in self.binfeats]
 
     def get_train_valid_test(self):
-        """Yield train/valid/test splits for IHDP1000"""
+        """Yield train/valid/test splits for IHDP1000
+
+        If use_separate_replications=True: yields each replication separately
+        Otherwise: yields one combined dataset with all replications
+        """
         # Load training data
         path_train = os.path.join(self.path_data, "ihdp_npci_1-1000.train")
         t_train = np.load(os.path.join(path_train, "t.npy"))
@@ -62,55 +81,84 @@ class IHDP1000(object):
         mu1_test = np.load(os.path.join(path_test, "mu1.npy"))
         x_test = np.load(os.path.join(path_test, "x.npy"))
 
-        # IHDP1000 data structure: (n_samples, n_features, n_replications)
-        # Need to transpose and reshape to get individual samples
-        # Original: (672, 25, 1000) -> Target: (672000, 25)
-        n_train_base, n_features, n_reps = x_train.shape
+        # Data structure: (n_samples, 1, n_replications) or (n_samples, n_features, n_replications)
+        n_train_base, n_features = x_train.shape[0], x_train.shape[1]
         n_test_base = x_test.shape[0]
 
-        # Reshape data: (n_samples, n_features, n_replications) -> (n_samples * n_replications, n_features)
-        x_train = x_train.transpose(0, 2, 1).reshape(-1, n_features)  # (672000, 25)
-        t_train = t_train.T.reshape(-1)  # (672000,)
-        yf_train = yf_train.T.reshape(-1)  # (672000,)
-        ycf_train = ycf_train.T.reshape(-1)  # (672000,)
-        mu0_train = mu0_train.T.reshape(-1)  # (672000,)
-        mu1_train = mu1_train.T.reshape(-1)  # (672000,)
+        # If using separate replications mode
+        if self.use_separate_replications:
+            for i in range(min(self.n_replications, x_train.shape[2])):
+                # Extract single replication
+                # Note: x is 3D (n_samples, n_features, n_reps)
+                #       t, y, mu0, mu1 are 2D (n_samples, n_reps)
+                xtr = x_train[:, :, i]  # (672, 25)
+                ttr = t_train[:, i]  # (672,)
+                ytr = yf_train[:, i]  # (672,)
+                ycftr = ycf_train[:, i]
+                mu0tr = mu0_train[:, i]
+                mu1tr = mu1_train[:, i]
 
-        x_test = x_test.transpose(0, 2, 1).reshape(-1, n_features)  # (750000, 25)
-        t_test = t_test.T.reshape(-1)  # (750000,)
-        yf_test = yf_test.T.reshape(-1)  # (750000,)
-        ycf_test = ycf_test.T.reshape(-1)  # (750000,)
-        mu0_test = mu0_test.T.reshape(-1)  # (750000,)
-        mu1_test = mu1_test.T.reshape(-1)  # (750000,)
+                xte = x_test[:, :, i]  # (75, 25)
+                tte = t_test[:, i]  # (75,)
+                yte = yf_test[:, i]
+                ycfte = ycf_test[:, i]
+                mu0te = mu0_test[:, i]
+                mu1te = mu1_test[:, i]
 
-        # Split training into train/validation
-        # Use smaller validation set due to large dataset
-        idxtrain, ival = train_test_split(np.arange(x_train.shape[0]), test_size=0.1, random_state=1)
+                # Adjust binary feature
+                xtr[:, 13] -= 1
+                xte[:, 13] -= 1
 
-        # Reshape to match IHDP format
-        t_train = t_train.reshape(-1, 1)
-        t_test = t_test.reshape(-1, 1)
-        yf_train = yf_train.reshape(-1, 1)
-        yf_test = yf_test.reshape(-1, 1)
-        ycf_train = ycf_train.reshape(-1, 1)
-        ycf_test = ycf_test.reshape(-1, 1)
-        mu0_train = mu0_train.reshape(-1, 1)
-        mu0_test = mu0_test.reshape(-1, 1)
-        mu1_train = mu1_train.reshape(-1, 1)
-        mu1_test = mu1_test.reshape(-1, 1)
+                # Split train into train/validation
+                idxtr, iva = train_test_split(np.arange(xtr.shape[0]), test_size=0.3, random_state=1)
 
-        # Adjust binary feature (same as IHDP)
-        x_train[:, 13] -= 1
-        x_test[:, 13] -= 1
+                # Create splits in IHDP format
+                train = (xtr[idxtr], ttr[idxtr].reshape(-1, 1), ytr[idxtr].reshape(-1, 1)), \
+                        (ycftr[idxtr].reshape(-1, 1), mu0tr[idxtr].reshape(-1, 1), mu1tr[idxtr].reshape(-1, 1))
+                valid = (xtr[iva], ttr[iva].reshape(-1, 1), ytr[iva].reshape(-1, 1)), \
+                        (ycftr[iva].reshape(-1, 1), mu0tr[iva].reshape(-1, 1), mu1tr[iva].reshape(-1, 1))
+                test = (xte, tte.reshape(-1, 1), yte.reshape(-1, 1)), \
+                       (ycfte.reshape(-1, 1), mu0te.reshape(-1, 1), mu1te.reshape(-1, 1))
 
-        # Create splits
-        train = (x_train[idxtrain], t_train[idxtrain], yf_train[idxtrain]), \
-                (ycf_train[idxtrain], mu0_train[idxtrain], mu1_train[idxtrain])
-        valid = (x_train[ival], t_train[ival], yf_train[ival]), \
-                (ycf_train[ival], mu0_train[ival], mu1_train[ival])
-        test = (x_test, t_test, yf_test), (ycf_test, mu0_test, mu1_test)
+                yield train, valid, test, self.contfeats, self.binfeats
 
-        yield train, valid, test, self.contfeats, self.binfeats
+        else:
+            # Combined mode: merge all replications (original behavior)
+            n_reps = min(self.n_replications, x_train.shape[2])
+
+            # Reshape data:
+            # x is 3D (n_samples, n_features, n_reps) -> (n_samples * n_reps, n_features)
+            # t, y, mu0, mu1 are 2D (n_samples, n_reps) -> (n_samples * n_reps, 1)
+            x_train_reshaped = x_train[:, :, :n_reps].transpose(0, 2, 1).reshape(-1, n_features)
+            t_train_reshaped = t_train[:, :n_reps].T.reshape(-1, 1)
+            yf_train_reshaped = yf_train[:, :n_reps].T.reshape(-1, 1)
+            ycf_train_reshaped = ycf_train[:, :n_reps].T.reshape(-1, 1)
+            mu0_train_reshaped = mu0_train[:, :n_reps].T.reshape(-1, 1)
+            mu1_train_reshaped = mu1_train[:, :n_reps].T.reshape(-1, 1)
+
+            x_test_reshaped = x_test[:, :, :n_reps].transpose(0, 2, 1).reshape(-1, n_features)
+            t_test_reshaped = t_test[:, :n_reps].T.reshape(-1, 1)
+            yf_test_reshaped = yf_test[:, :n_reps].T.reshape(-1, 1)
+            ycf_test_reshaped = ycf_test[:, :n_reps].T.reshape(-1, 1)
+            mu0_test_reshaped = mu0_test[:, :n_reps].T.reshape(-1, 1)
+            mu1_test_reshaped = mu1_test[:, :n_reps].T.reshape(-1, 1)
+
+            # Split training into train/validation
+            idxtrain, ival = train_test_split(np.arange(x_train_reshaped.shape[0]), test_size=0.1, random_state=1)
+
+            # Adjust binary feature (same as IHDP)
+            x_train_reshaped[:, 13] -= 1
+            x_test_reshaped[:, 13] -= 1
+
+            # Create splits
+            train = (x_train_reshaped[idxtrain], t_train_reshaped[idxtrain], yf_train_reshaped[idxtrain]), \
+                    (ycf_train_reshaped[idxtrain], mu0_train_reshaped[idxtrain], mu1_train_reshaped[idxtrain])
+            valid = (x_train_reshaped[ival], t_train_reshaped[ival], yf_train_reshaped[ival]), \
+                    (ycf_train_reshaped[ival], mu0_train_reshaped[ival], mu1_train_reshaped[ival])
+            test = (x_test_reshaped, t_test_reshaped, yf_test_reshaped), \
+                   (ycf_test_reshaped, mu0_test_reshaped, mu1_test_reshaped)
+
+            yield train, valid, test, self.contfeats, self.binfeats
 
 
 class TWINS(object):
