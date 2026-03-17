@@ -1,0 +1,478 @@
+================================================================================
+CEVAE 实验记录
+================================================================================
+
+--------------------------------------------------------------------------------
+【实验配置】
+--------------------------------------------------------------------------------
+数据集:           IHDP100
+模式:              separate (每个replication独立训练)
+Replications:      100
+Epochs:           100
+学习率:           0.001
+优化器:           adam
+早停检查频率:      10
+输出频率:          20
+
+开始时间:          2026-03-16 20:24:38
+结束时间:          2026-03-17 02:36:44
+总耗时:            6小时 12分钟 5秒
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+【最终结果】
+--------------------------------------------------------------------------------
+
+CEVAE model total scores on IHDP100
+
+训练集:
+- ITE:  1.951 ± 0.197
+- ATE:  0.275 ± 0.029
+- PEHE: 2.652 ± 0.379
+
+测试集:
+- ITE:  1.911 ± 0.195
+- ATE:  0.436 ± 0.084
+- PEHE: 3.120 ± 0.494
+
+--------------------------------------------------------------------------------
+【每个Replication详细结果】
+--------------------------------------------------------------------------------
+
+Replication 1/100:
+  Train - ITE: 1.147, ATE: 0.221, PEHE: 0.766
+  Test  - ITE: 1.062, ATE: 0.141, PEHE: 0.679
+
+Replication 2/100:
+  Train - ITE: 1.127, ATE: 0.174, PEHE: 0.682
+  Test  - ITE: 1.100, ATE: 0.203, PEHE: 0.644
+
+Replication 3/100:
+  Train - ITE: 1.138, ATE: 0.000, PEHE: 0.690
+  Test  - ITE: 1.171, ATE: 0.194, PEHE: 0.935
+
+Replication 4/100:
+  Train - ITE: 1.247, ATE: 0.046, PEHE: 1.121
+  Test  - ITE: 1.030, ATE: 0.251, PEHE: 1.268
+
+Replication 5/100:
+  Train - ITE: 1.432, ATE: 0.352, PEHE: 1.549
+  Test  - ITE: 1.468, ATE: 0.399, PEHE: 1.897
+
+Replication 6/100:
+  Train - ITE: 1.038, ATE: 0.154, PEHE: 0.541
+  Test  - ITE: 0.971, ATE: 0.086, PEHE: 0.561
+
+Replication 7/100:
+  Train - ITE: 1.106, ATE: 0.139, PEHE: 0.532
+  Test  - ITE: 1.150, ATE: 0.134, PEHE: 0.539
+
+Replication 8/100:
+  Train - ITE: 1.421, ATE: 0.166, PEHE: 1.167
+  Test  - ITE: 1.439, ATE: 0.269, PEHE: 1.260
+
+Replication 9/100:
+  Train - ITE: 7.225, ATE: 0.260, PEHE: 11.893
+  Test  - ITE: 7.692, ATE: 1.861, PEHE: 22.734
+
+Replication 10/100:
+  Train - ITE: 2.342, ATE: 0.553, PEHE: 3.637
+  Test  - ITE: 1.848, ATE: 0.272, PEHE: 3.735
+
+Replication 11/100:
+  Train - ITE: 1.181, ATE: 0.234, PEHE: 1.019
+  Test  - ITE: 1.123, ATE: 0.434, PEHE: 0.921
+
+Replication 12/100:
+  Train - ITE: 1.402, ATE: 0.024, PEHE: 1.753
+  Test  - ITE: 1.246, ATE: 0.003, PEHE: 1.495
+
+Replication 13/100:
+  Train - ITE: 14.081, ATE: 1.433, PEHE: 22.703
+  Test  - ITE: 15.155, ATE: 7.489, PEHE: 25.500
+
+Replication 14/100:
+  Train - ITE: 1.177, ATE: 0.114, PEHE: 0.756
+  Test  - ITE: 1.255, ATE: 0.117, PEHE: 0.674
+
+Replication 15/100:
+  Train - ITE: 1.450, ATE: 0.551, PEHE: 1.353
+  Test  - ITE: 1.849, ATE: 0.535, PEHE: 1.536
+
+Replication 16/100:
+  Train - ITE: 1.227, ATE: 0.141, PEHE: 0.889
+  Test  - ITE: 1.085, ATE: 0.128, PEHE: 0.900
+
+Replication 17/100:
+  Train - ITE: 1.397, ATE: 0.108, PEHE: 1.699
+  Test  - ITE: 1.080, ATE: 0.097, PEHE: 1.664
+
+Replication 18/100:
+  Train - ITE: 1.300, ATE: 0.207, PEHE: 1.335
+  Test  - ITE: 1.277, ATE: 0.049, PEHE: 1.623
+
+Replication 19/100:
+  Train - ITE: 1.293, ATE: 0.000, PEHE: 1.372
+  Test  - ITE: 1.256, ATE: 0.191, PEHE: 1.466
+
+Replication 20/100:
+  Train - ITE: 1.146, ATE: 0.096, PEHE: 0.754
+  Test  - ITE: 1.406, ATE: 0.014, PEHE: 0.860
+
+Replication 21/100:
+  Train - ITE: 2.178, ATE: 0.340, PEHE: 4.339
+  Test  - ITE: 2.067, ATE: 0.092, PEHE: 3.484
+
+Replication 22/100:
+  Train - ITE: 1.128, ATE: 0.131, PEHE: 0.737
+  Test  - ITE: 0.979, ATE: 0.125, PEHE: 0.733
+
+Replication 23/100:
+  Train - ITE: 1.403, ATE: 0.257, PEHE: 1.642
+  Test  - ITE: 1.309, ATE: 0.289, PEHE: 1.314
+
+Replication 24/100:
+  Train - ITE: 1.668, ATE: 0.262, PEHE: 2.349
+  Test  - ITE: 1.925, ATE: 0.331, PEHE: 2.987
+
+Replication 25/100:
+  Train - ITE: 1.150, ATE: 0.009, PEHE: 1.003
+  Test  - ITE: 1.824, ATE: 0.184, PEHE: 1.874
+
+Replication 26/100:
+  Train - ITE: 2.637, ATE: 0.594, PEHE: 5.661
+  Test  - ITE: 4.475, ATE: 1.736, PEHE: 8.186
+
+Replication 27/100:
+  Train - ITE: 1.190, ATE: 0.032, PEHE: 0.915
+  Test  - ITE: 1.103, ATE: 0.073, PEHE: 0.794
+
+Replication 28/100:
+  Train - ITE: 9.042, ATE: 1.559, PEHE: 17.559
+  Test  - ITE: 9.098, ATE: 1.293, PEHE: 27.517
+
+Replication 29/100:
+  Train - ITE: 1.358, ATE: 0.217, PEHE: 1.289
+  Test  - ITE: 1.253, ATE: 0.151, PEHE: 1.140
+
+Replication 30/100:
+  Train - ITE: 1.350, ATE: 0.087, PEHE: 1.496
+  Test  - ITE: 1.272, ATE: 0.140, PEHE: 1.272
+
+Replication 31/100:
+  Train - ITE: 1.353, ATE: 0.322, PEHE: 1.587
+  Test  - ITE: 1.088, ATE: 0.110, PEHE: 2.304
+
+Replication 32/100:
+  Train - ITE: 1.072, ATE: 0.084, PEHE: 0.646
+  Test  - ITE: 1.223, ATE: 0.077, PEHE: 0.834
+
+Replication 33/100:
+  Train - ITE: 1.391, ATE: 0.085, PEHE: 1.512
+  Test  - ITE: 1.397, ATE: 0.402, PEHE: 1.284
+
+Replication 34/100:
+  Train - ITE: 10.667, ATE: 1.103, PEHE: 17.974
+  Test  - ITE: 6.349, ATE: 1.673, PEHE: 18.159
+
+Replication 35/100:
+  Train - ITE: 1.722, ATE: 0.088, PEHE: 2.701
+  Test  - ITE: 2.115, ATE: 0.189, PEHE: 3.311
+
+Replication 36/100:
+  Train - ITE: 1.860, ATE: 0.554, PEHE: 2.770
+  Test  - ITE: 1.248, ATE: 0.917, PEHE: 2.563
+
+Replication 37/100:
+  Train - ITE: 2.204, ATE: 0.435, PEHE: 4.122
+  Test  - ITE: 2.140, ATE: 1.080, PEHE: 5.199
+
+Replication 38/100:
+  Train - ITE: 1.397, ATE: 0.062, PEHE: 1.293
+  Test  - ITE: 1.641, ATE: 0.049, PEHE: 1.711
+
+Replication 39/100:
+  Train - ITE: 2.148, ATE: 0.313, PEHE: 4.057
+  Test  - ITE: 1.636, ATE: 0.638, PEHE: 4.121
+
+Replication 40/100:
+  Train - ITE: 1.346, ATE: 0.212, PEHE: 1.876
+  Test  - ITE: 1.285, ATE: 0.083, PEHE: 1.798
+
+Replication 41/100:
+  Train - ITE: 1.209, ATE: 0.245, PEHE: 0.880
+  Test  - ITE: 1.107, ATE: 0.440, PEHE: 1.064
+
+Replication 42/100:
+  Train - ITE: 1.368, ATE: 0.077, PEHE: 0.952
+  Test  - ITE: 1.370, ATE: 0.051, PEHE: 0.883
+
+Replication 43/100:
+  Train - ITE: 1.215, ATE: 0.137, PEHE: 1.028
+  Test  - ITE: 1.053, ATE: 0.298, PEHE: 1.007
+
+Replication 44/100:
+  Train - ITE: 1.249, ATE: 0.278, PEHE: 1.358
+  Test  - ITE: 1.255, ATE: 0.315, PEHE: 1.309
+
+Replication 45/100:
+  Train - ITE: 1.397, ATE: 0.410, PEHE: 1.733
+  Test  - ITE: 1.284, ATE: 0.246, PEHE: 1.700
+
+Replication 46/100:
+  Train - ITE: 1.545, ATE: 0.158, PEHE: 1.980
+  Test  - ITE: 1.280, ATE: 0.067, PEHE: 1.732
+
+Replication 47/100:
+  Train - ITE: 1.589, ATE: 0.371, PEHE: 2.221
+  Test  - ITE: 1.432, ATE: 0.063, PEHE: 2.868
+
+Replication 48/100:
+  Train - ITE: 1.243, ATE: 0.589, PEHE: 0.900
+  Test  - ITE: 1.255, ATE: 0.579, PEHE: 0.915
+
+Replication 49/100:
+  Train - ITE: 1.684, ATE: 0.004, PEHE: 2.049
+  Test  - ITE: 1.621, ATE: 0.112, PEHE: 2.281
+
+Replication 50/100:
+  Train - ITE: 1.180, ATE: 0.258, PEHE: 1.116
+  Test  - ITE: 1.124, ATE: 0.383, PEHE: 1.172
+
+Replication 51/100:
+  Train - ITE: 1.140, ATE: 0.084, PEHE: 1.030
+  Test  - ITE: 1.219, ATE: 0.026, PEHE: 0.932
+
+Replication 52/100:
+  Train - ITE: 1.460, ATE: 0.168, PEHE: 1.983
+  Test  - ITE: 1.687, ATE: 0.463, PEHE: 2.170
+
+Replication 53/100:
+  Train - ITE: 3.022, ATE: 0.161, PEHE: 5.498
+  Test  - ITE: 2.544, ATE: 0.459, PEHE: 5.200
+
+Replication 54/100:
+  Train - ITE: 1.960, ATE: 0.286, PEHE: 3.303
+  Test  - ITE: 2.416, ATE: 0.520, PEHE: 3.267
+
+Replication 55/100:
+  Train - ITE: 1.240, ATE: 0.248, PEHE: 0.806
+  Test  - ITE: 1.267, ATE: 0.160, PEHE: 0.876
+
+Replication 56/100:
+  Train - ITE: 1.069, ATE: 0.231, PEHE: 0.565
+  Test  - ITE: 1.131, ATE: 0.270, PEHE: 0.533
+
+Replication 57/100:
+  Train - ITE: 1.114, ATE: 0.184, PEHE: 0.543
+  Test  - ITE: 0.947, ATE: 0.313, PEHE: 0.564
+
+Replication 58/100:
+  Train - ITE: 1.412, ATE: 0.043, PEHE: 1.726
+  Test  - ITE: 1.166, ATE: 0.006, PEHE: 1.725
+
+Replication 59/100:
+  Train - ITE: 1.197, ATE: 0.169, PEHE: 0.781
+  Test  - ITE: 1.242, ATE: 0.251, PEHE: 0.743
+
+Replication 60/100:
+  Train - ITE: 2.867, ATE: 1.133, PEHE: 5.669
+  Test  - ITE: 2.037, ATE: 1.018, PEHE: 5.471
+
+Replication 61/100:
+  Train - ITE: 1.227, ATE: 0.406, PEHE: 0.808
+  Test  - ITE: 1.096, ATE: 0.403, PEHE: 0.840
+
+Replication 62/100:
+  Train - ITE: 1.267, ATE: 0.226, PEHE: 1.087
+  Test  - ITE: 1.274, ATE: 0.095, PEHE: 1.143
+
+Replication 63/100:
+  Train - ITE: 1.341, ATE: 0.167, PEHE: 1.457
+  Test  - ITE: 1.200, ATE: 0.180, PEHE: 1.822
+
+Replication 64/100:
+  Train - ITE: 1.167, ATE: 0.260, PEHE: 1.128
+  Test  - ITE: 1.122, ATE: 0.075, PEHE: 1.368
+
+Replication 65/100:
+  Train - ITE: 1.557, ATE: 0.062, PEHE: 1.859
+  Test  - ITE: 1.185, ATE: 0.093, PEHE: 2.473
+
+Replication 66/100:
+  Train - ITE: 1.219, ATE: 0.022, PEHE: 0.948
+  Test  - ITE: 1.077, ATE: 0.325, PEHE: 1.221
+
+Replication 67/100:
+  Train - ITE: 1.137, ATE: 0.163, PEHE: 0.714
+  Test  - ITE: 1.252, ATE: 0.135, PEHE: 0.736
+
+Replication 68/100:
+  Train - ITE: 6.186, ATE: 0.448, PEHE: 12.131
+  Test  - ITE: 5.609, ATE: 0.683, PEHE: 12.413
+
+Replication 69/100:
+  Train - ITE: 1.131, ATE: 0.165, PEHE: 0.663
+  Test  - ITE: 1.115, ATE: 0.097, PEHE: 0.693
+
+Replication 70/100:
+  Train - ITE: 1.122, ATE: 0.012, PEHE: 0.546
+  Test  - ITE: 1.077, ATE: 0.030, PEHE: 0.518
+
+Replication 71/100:
+  Train - ITE: 2.229, ATE: 0.744, PEHE: 3.610
+  Test  - ITE: 1.824, ATE: 0.130, PEHE: 2.777
+
+Replication 72/100:
+  Train - ITE: 1.077, ATE: 0.301, PEHE: 0.492
+  Test  - ITE: 1.086, ATE: 0.251, PEHE: 0.503
+
+Replication 73/100:
+  Train - ITE: 1.163, ATE: 0.074, PEHE: 0.758
+  Test  - ITE: 1.022, ATE: 0.023, PEHE: 0.775
+
+Replication 74/100:
+  Train - ITE: 1.114, ATE: 0.125, PEHE: 0.576
+  Test  - ITE: 1.120, ATE: 0.077, PEHE: 0.521
+
+Replication 75/100:
+  Train - ITE: 1.059, ATE: 0.056, PEHE: 0.417
+  Test  - ITE: 1.070, ATE: 0.019, PEHE: 0.392
+
+Replication 76/100:
+  Train - ITE: 2.043, ATE: 0.120, PEHE: 3.381
+  Test  - ITE: 2.822, ATE: 0.577, PEHE: 3.932
+
+Replication 77/100:
+  Train - ITE: 1.105, ATE: 0.248, PEHE: 0.708
+  Test  - ITE: 1.187, ATE: 0.276, PEHE: 0.707
+
+Replication 78/100:
+  Train - ITE: 1.136, ATE: 0.111, PEHE: 0.639
+  Test  - ITE: 1.089, ATE: 0.045, PEHE: 0.620
+
+Replication 79/100:
+  Train - ITE: 1.122, ATE: 0.206, PEHE: 0.585
+  Test  - ITE: 1.195, ATE: 0.177, PEHE: 0.673
+
+Replication 80/100:
+  Train - ITE: 1.132, ATE: 0.009, PEHE: 0.535
+  Test  - ITE: 1.006, ATE: 0.060, PEHE: 0.576
+
+Replication 81/100:
+  Train - ITE: 4.816, ATE: 0.429, PEHE: 10.154
+  Test  - ITE: 6.743, ATE: 2.435, PEHE: 11.693
+
+Replication 82/100:
+  Train - ITE: 2.060, ATE: 0.282, PEHE: 3.740
+  Test  - ITE: 2.095, ATE: 0.202, PEHE: 4.953
+
+Replication 83/100:
+  Train - ITE: 1.516, ATE: 0.048, PEHE: 2.080
+  Test  - ITE: 1.465, ATE: 0.153, PEHE: 2.588
+
+Replication 84/100:
+  Train - ITE: 2.260, ATE: 0.526, PEHE: 4.934
+  Test  - ITE: 2.178, ATE: 0.451, PEHE: 6.902
+
+Replication 85/100:
+  Train - ITE: 3.476, ATE: 0.936, PEHE: 8.542
+  Test  - ITE: 3.081, ATE: 0.749, PEHE: 9.309
+
+Replication 86/100:
+  Train - ITE: 4.456, ATE: 0.375, PEHE: 8.479
+  Test  - ITE: 3.422, ATE: 1.447, PEHE: 13.259
+
+Replication 87/100:
+  Train - ITE: 1.224, ATE: 0.535, PEHE: 1.319
+  Test  - ITE: 1.477, ATE: 0.514, PEHE: 1.319
+
+Replication 88/100:
+  Train - ITE: 1.119, ATE: 0.363, PEHE: 0.538
+  Test  - ITE: 1.033, ATE: 0.311, PEHE: 0.538
+
+Replication 89/100:
+  Train - ITE: 1.309, ATE: 0.049, PEHE: 1.240
+  Test  - ITE: 1.225, ATE: 0.123, PEHE: 1.203
+
+Replication 90/100:
+  Train - ITE: 1.262, ATE: 0.064, PEHE: 1.149
+  Test  - ITE: 1.332, ATE: 0.080, PEHE: 1.468
+
+Replication 91/100:
+  Train - ITE: 1.212, ATE: 0.482, PEHE: 0.726
+  Test  - ITE: 1.145, ATE: 0.557, PEHE: 0.723
+
+Replication 92/100:
+  Train - ITE: 1.268, ATE: 0.273, PEHE: 1.449
+  Test  - ITE: 1.219, ATE: 0.261, PEHE: 1.170
+
+Replication 93/100:
+  Train - ITE: 3.548, ATE: 1.220, PEHE: 6.143
+  Test  - ITE: 4.542, ATE: 1.159, PEHE: 6.418
+
+Replication 94/100:
+  Train - ITE: 1.198, ATE: 0.141, PEHE: 0.930
+  Test  - ITE: 1.227, ATE: 0.090, PEHE: 1.086
+
+Replication 95/100:
+  Train - ITE: 1.120, ATE: 0.036, PEHE: 1.122
+  Test  - ITE: 1.364, ATE: 0.028, PEHE: 1.134
+
+Replication 96/100:
+  Train - ITE: 1.280, ATE: 0.018, PEHE: 1.359
+  Test  - ITE: 1.320, ATE: 0.577, PEHE: 2.168
+
+Replication 97/100:
+  Train - ITE: 1.252, ATE: 0.232, PEHE: 1.066
+  Test  - ITE: 1.115, ATE: 0.032, PEHE: 1.136
+
+Replication 98/100:
+  Train - ITE: 4.069, ATE: 0.189, PEHE: 6.201
+  Test  - ITE: 3.642, ATE: 1.728, PEHE: 9.239
+
+Replication 99/100:
+  Train - ITE: 1.481, ATE: 0.368, PEHE: 1.819
+  Test  - ITE: 1.287, ATE: 0.322, PEHE: 1.678
+
+Replication 100/100:
+  Train - ITE: 1.310, ATE: 0.060, PEHE: 1.301
+  Test  - ITE: 1.273, ATE: 0.101, PEHE: 1.394
+
+--------------------------------------------------------------------------------
+【训练过程摘要】
+--------------------------------------------------------------------------------
+
+关键训练节点输出 (共500个epoch，显示其中10个):
+
+[Epoch 1]
+Epoch: 1/100, log p(x) >= 23.821, ite_tr: 1.500, ate_tr: 0.621, pehe_tr: 1.518, rmse_f_tr: 1.491, rmse_cf_tr: 1.511, ite_te: 1.224, ate_te: 0.492, pehe_te: 1.378, dt: 22.156
+[Epoch 51]
+Epoch: 1/100, log p(x) >= 23.351, ite_tr: 1.644, ate_tr: 0.030, pehe_tr: 2.339, rmse_f_tr: 2.455, rmse_cf_tr: 1.663, ite_te: 1.518, ate_te: 0.612, pehe_te: 1.709, dt: 23.916
+[Epoch 101]
+Epoch: 1/100, log p(x) >= 23.302, ite_tr: 3.159, ate_tr: 0.538, pehe_tr: 7.764, rmse_f_tr: 7.625, rmse_cf_tr: 3.161, ite_te: 3.354, ate_te: 1.483, pehe_te: 5.445, dt: 30.386
+[Epoch 151]
+Epoch: 1/100, log p(x) >= 23.283, ite_tr: 1.923, ate_tr: 0.137, pehe_tr: 2.808, rmse_f_tr: 2.686, rmse_cf_tr: 1.906, ite_te: 1.392, ate_te: 0.666, pehe_te: 3.654, dt: 5.236
+[Epoch 201]
+Epoch: 1/100, log p(x) >= 23.370, ite_tr: 1.503, ate_tr: 0.309, pehe_tr: 1.650, rmse_f_tr: 1.565, rmse_cf_tr: 1.586, ite_te: 1.568, ate_te: 0.159, pehe_te: 1.686, dt: 30.657
+[Epoch 251]
+Epoch: 1/100, log p(x) >= 23.197, ite_tr: 1.614, ate_tr: 0.245, pehe_tr: 2.235, rmse_f_tr: 2.175, rmse_cf_tr: 1.655, ite_te: 1.514, ate_te: 0.271, pehe_te: 2.134, dt: 36.796
+[Epoch 301]
+Epoch: 1/100, log p(x) >= 23.456, ite_tr: 1.333, ate_tr: 0.010, pehe_tr: 1.142, rmse_f_tr: 1.481, rmse_cf_tr: 1.330, ite_te: 1.213, ate_te: 0.077, pehe_te: 1.072, dt: 24.888
+[Epoch 351]
+Epoch: 1/100, log p(x) >= 23.025, ite_tr: 3.597, ate_tr: 0.502, pehe_tr: 6.973, rmse_f_tr: 6.202, rmse_cf_tr: 3.680, ite_te: 2.645, ate_te: 1.148, pehe_te: 5.612, dt: 4.936
+[Epoch 401]
+Epoch: 1/100, log p(x) >= 23.212, ite_tr: 8.828, ate_tr: 0.084, pehe_tr: 19.744, rmse_f_tr: 18.152, rmse_cf_tr: 8.881, ite_te: 12.320, ate_te: 1.997, pehe_te: 18.795, dt: 6.026
+[Epoch 451]
+Epoch: 1/100, log p(x) >= 23.193, ite_tr: 1.352, ate_tr: 0.513, pehe_tr: 1.203, rmse_f_tr: 1.274, rmse_cf_tr: 1.341, ite_te: 1.458, ate_te: 0.386, pehe_te: 1.072, dt: 4.871
+--------------------------------------------------------------------------------
+【模型保存位置】
+--------------------------------------------------------------------------------
+
+models/cevae_ihdp100/
+├── cevae_ihdp100_rep001/
+├── cevae_ihdp100_rep002/
+├── ...
+└── cevae_ihdp100_rep100/
+
+================================================================================

@@ -19,7 +19,8 @@
       "Bash(cmd /c \"C:\\\\Users\\\\y\\\\anaconda3\\\\Scripts\\\\activate.bat cevae && python tests/analyze_ihdp1000_heterogeneity.py\")",
       "Bash(C:/Users/y/anaconda3/envs/cevae/python.exe:*)",
       "Bash(C:/Users/y/miniconda3/envs/cevae/python.exe:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebSearch"
     ]
   }
 }

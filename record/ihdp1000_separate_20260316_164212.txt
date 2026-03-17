@@ -1,0 +1,184 @@
+============================================================
+CEVAE 实验记录
+============================================================
+
+【实验配置】
+------------------------------------------------------------
+数据集: ihdp1000
+模式: separate
+时间: 2026-03-16 16:53:56
+命令: python cevae_ihdp.py -dataset ihdp1000 -separate_reps -n_reps 10
+
+【最终结果】
+------------------------------------------------------------
+train ITE: 2.041+-0.713, train ATE: 0.237+-0.080, train PEHE: 2.673+-1.464
+test ITE: 1.879+-0.504, test ATE: 0.207+-0.052, test PEHE: 2.284+-1.063
+
+【训练过程】
+------------------------------------------------------------
+Replication 1/10
+Improved validation bound, old: -inf, new: -18.792
+Epoch: 1/100, log p(x) >= 23.405, ite_tr: 1.468, ate_tr: 0.205, pehe_tr: 1.490, rmse_f_tr: 1.528, rmse_cf_tr: 1.537, ite_te: 1.622, ate_te: 0.170, pehe_te: 1.683, dt: 4.117
+Improved validation bound, old: -18.792, new: -17.057
+Epoch: 11/100, log p(x) >= 17.586, ite_tr: 1.191, ate_tr: 0.373, pehe_tr: 0.978, rmse_f_tr: 1.200, rmse_cf_tr: 1.251, ite_te: 1.314, ate_te: 0.407, pehe_te: 1.088, dt: 4.030
+Improved validation bound, old: -17.057, new: -16.641
+Epoch: 21/100, log p(x) >= 16.854, ite_tr: 1.182, ate_tr: 0.283, pehe_tr: 0.804, rmse_f_tr: 1.117, rmse_cf_tr: 1.233, ite_te: 1.315, ate_te: 0.250, pehe_te: 0.807, dt: 3.528
+Improved validation bound, old: -16.641, new: -16.480
+Epoch: 31/100, log p(x) >= 16.324, ite_tr: 1.256, ate_tr: 0.214, pehe_tr: 0.931, rmse_f_tr: 1.122, rmse_cf_tr: 1.227, ite_te: 1.247, ate_te: 0.234, pehe_te: 0.978, dt: 3.766
+Improved validation bound, old: -16.480, new: -16.390
+Epoch: 41/100, log p(x) >= 15.987, ite_tr: 1.231, ate_tr: 0.081, pehe_tr: 0.962, rmse_f_tr: 1.116, rmse_cf_tr: 1.260, ite_te: 1.269, ate_te: 0.127, pehe_te: 0.947, dt: 3.736
+Epoch: 51/100, log p(x) >= 15.541, ite_tr: 1.169, ate_tr: 0.329, pehe_tr: 0.884, rmse_f_tr: 1.112, rmse_cf_tr: 1.232, ite_te: 1.343, ate_te: 0.351, pehe_te: 0.961, dt: 0.648
+Epoch: 61/100, log p(x) >= 15.563, ite_tr: 1.159, ate_tr: 0.090, pehe_tr: 0.821, rmse_f_tr: 1.079, rmse_cf_tr: 1.202, ite_te: 1.251, ate_te: 0.130, pehe_te: 0.769, dt: 0.566
+Epoch: 71/100, log p(x) >= 15.176, ite_tr: 1.312, ate_tr: 0.298, pehe_tr: 1.114, rmse_f_tr: 1.068, rmse_cf_tr: 1.344, ite_te: 1.428, ate_te: 0.340, pehe_te: 1.104, dt: 0.622
+Epoch: 81/100, log p(x) >= 15.380, ite_tr: 1.212, ate_tr: 0.166, pehe_tr: 0.940, rmse_f_tr: 1.073, rmse_cf_tr: 1.222, ite_te: 1.273, ate_te: 0.154, pehe_te: 0.942, dt: 0.587
+Epoch: 91/100, log p(x) >= 15.545, ite_tr: 1.264, ate_tr: 0.138, pehe_tr: 0.966, rmse_f_tr: 1.007, rmse_cf_tr: 1.263, ite_te: 1.450, ate_te: 0.159, pehe_te: 0.963, dt: 0.582
+Replication: 1/10, tr_ite: 1.125, tr_ate: 0.080, tr_pehe: 0.680, te_ite: 1.228, te_ate: 0.135, te_pehe: 0.646
+Replication 2/10
+Improved validation bound, old: -inf, new: -18.435
+Epoch: 1/100, log p(x) >= 23.275, ite_tr: 1.297, ate_tr: 0.250, pehe_tr: 1.155, rmse_f_tr: 1.333, rmse_cf_tr: 1.329, ite_te: 1.194, ate_te: 0.087, pehe_te: 1.255, dt: 4.509
+Improved validation bound, old: -18.435, new: -16.712
+Epoch: 11/100, log p(x) >= 17.787, ite_tr: 1.129, ate_tr: 0.159, pehe_tr: 0.763, rmse_f_tr: 1.212, rmse_cf_tr: 1.182, ite_te: 1.022, ate_te: 0.203, pehe_te: 0.894, dt: 3.641
+Improved validation bound, old: -16.712, new: -16.353
+Epoch: 21/100, log p(x) >= 16.964, ite_tr: 1.160, ate_tr: 0.151, pehe_tr: 0.835, rmse_f_tr: 1.146, rmse_cf_tr: 1.184, ite_te: 1.124, ate_te: 0.255, pehe_te: 0.958, dt: 3.792
+Epoch: 31/100, log p(x) >= 16.762, ite_tr: 1.158, ate_tr: 0.201, pehe_tr: 0.806, rmse_f_tr: 1.157, rmse_cf_tr: 1.183, ite_te: 1.098, ate_te: 0.169, pehe_te: 0.932, dt: 0.594
+Improved validation bound, old: -16.353, new: -16.140
+Epoch: 41/100, log p(x) >= 16.169, ite_tr: 1.283, ate_tr: 0.190, pehe_tr: 1.053, rmse_f_tr: 1.120, rmse_cf_tr: 1.254, ite_te: 1.218, ate_te: 0.323, pehe_te: 1.235, dt: 3.783
+Improved validation bound, old: -16.140, new: -15.747
+Epoch: 51/100, log p(x) >= 15.958, ite_tr: 1.161, ate_tr: 0.195, pehe_tr: 0.850, rmse_f_tr: 1.125, rmse_cf_tr: 1.175, ite_te: 1.081, ate_te: 0.050, pehe_te: 0.931, dt: 4.665
+Epoch: 61/100, log p(x) >= 15.762, ite_tr: 1.274, ate_tr: 0.203, pehe_tr: 0.988, rmse_f_tr: 1.103, rmse_cf_tr: 1.259, ite_te: 1.127, ate_te: 0.198, pehe_te: 1.009, dt: 0.615
+Epoch: 71/100, log p(x) >= 15.310, ite_tr: 1.230, ate_tr: 0.105, pehe_tr: 0.858, rmse_f_tr: 1.057, rmse_cf_tr: 1.228, ite_te: 1.088, ate_te: 0.141, pehe_te: 1.044, dt: 0.656
+Epoch: 81/100, log p(x) >= 15.329, ite_tr: 1.292, ate_tr: 0.078, pehe_tr: 1.124, rmse_f_tr: 1.079, rmse_cf_tr: 1.281, ite_te: 1.203, ate_te: 0.013, pehe_te: 1.283, dt: 0.627
+Epoch: 91/100, log p(x) >= 14.749, ite_tr: 1.248, ate_tr: 0.003, pehe_tr: 0.999, rmse_f_tr: 1.092, rmse_cf_tr: 1.239, ite_te: 1.122, ate_te: 0.100, pehe_te: 0.966, dt: 0.646
+Replication: 2/10, tr_ite: 1.113, tr_ate: 0.168, tr_pehe: 0.638, te_ite: 0.956, te_ate: 0.151, te_pehe: 0.763
+Replication 3/10
+Improved validation bound, old: -inf, new: -18.745
+Epoch: 1/100, log p(x) >= 23.510, ite_tr: 1.367, ate_tr: 0.276, pehe_tr: 1.277, rmse_f_tr: 1.475, rmse_cf_tr: 1.329, ite_te: 1.466, ate_te: 0.211, pehe_te: 1.385, dt: 4.323
+Improved validation bound, old: -18.745, new: -15.865
+Epoch: 11/100, log p(x) >= 17.541, ite_tr: 1.224, ate_tr: 0.037, pehe_tr: 0.911, rmse_f_tr: 1.252, rmse_cf_tr: 1.177, ite_te: 1.137, ate_te: 0.049, pehe_te: 0.955, dt: 4.326
+Epoch: 21/100, log p(x) >= 16.955, ite_tr: 1.158, ate_tr: 0.095, pehe_tr: 0.810, rmse_f_tr: 1.203, rmse_cf_tr: 1.071, ite_te: 1.124, ate_te: 0.183, pehe_te: 0.944, dt: 0.593
+Epoch: 31/100, log p(x) >= 16.464, ite_tr: 1.192, ate_tr: 0.157, pehe_tr: 0.864, rmse_f_tr: 1.192, rmse_cf_tr: 1.126, ite_te: 1.011, ate_te: 0.199, pehe_te: 0.869, dt: 0.596
+Epoch: 41/100, log p(x) >= 16.153, ite_tr: 1.196, ate_tr: 0.098, pehe_tr: 0.913, rmse_f_tr: 1.163, rmse_cf_tr: 1.192, ite_te: 1.109, ate_te: 0.173, pehe_te: 0.989, dt: 0.578
+Improved validation bound, old: -15.865, new: -15.751
+Epoch: 51/100, log p(x) >= 15.567, ite_tr: 1.208, ate_tr: 0.138, pehe_tr: 0.968, rmse_f_tr: 1.198, rmse_cf_tr: 1.167, ite_te: 1.150, ate_te: 0.151, pehe_te: 0.971, dt: 3.615
+Epoch: 61/100, log p(x) >= 15.755, ite_tr: 1.214, ate_tr: 0.032, pehe_tr: 0.925, rmse_f_tr: 1.140, rmse_cf_tr: 1.119, ite_te: 1.012, ate_te: 0.057, pehe_te: 0.781, dt: 0.568
+Epoch: 71/100, log p(x) >= 15.421, ite_tr: 1.237, ate_tr: 0.028, pehe_tr: 1.003, rmse_f_tr: 1.151, rmse_cf_tr: 1.118, ite_te: 1.113, ate_te: 0.056, pehe_te: 0.963, dt: 0.618
+Epoch: 81/100, log p(x) >= 15.842, ite_tr: 1.280, ate_tr: 0.127, pehe_tr: 1.040, rmse_f_tr: 1.133, rmse_cf_tr: 1.193, ite_te: 1.241, ate_te: 0.084, pehe_te: 1.025, dt: 0.649
+Epoch: 91/100, log p(x) >= 14.445, ite_tr: 1.216, ate_tr: 0.056, pehe_tr: 0.967, rmse_f_tr: 1.061, rmse_cf_tr: 1.156, ite_te: 1.030, ate_te: 0.009, pehe_te: 0.977, dt: 0.598
+Replication: 3/10, tr_ite: 1.142, tr_ate: 0.131, tr_pehe: 0.667, te_ite: 1.079, te_ate: 0.150, te_pehe: 0.707
+Replication 4/10
+Improved validation bound, old: -inf, new: -18.869
+Epoch: 1/100, log p(x) >= 23.327, ite_tr: 1.583, ate_tr: 0.158, pehe_tr: 1.976, rmse_f_tr: 2.140, rmse_cf_tr: 1.563, ite_te: 1.605, ate_te: 0.402, pehe_te: 1.883, dt: 4.363
+Improved validation bound, old: -18.869, new: -16.559
+Epoch: 11/100, log p(x) >= 17.533, ite_tr: 1.308, ate_tr: 0.091, pehe_tr: 1.422, rmse_f_tr: 1.658, rmse_cf_tr: 1.367, ite_te: 1.346, ate_te: 0.292, pehe_te: 1.545, dt: 5.464
+Improved validation bound, old: -16.559, new: -16.474
+Epoch: 21/100, log p(x) >= 16.860, ite_tr: 1.350, ate_tr: 0.139, pehe_tr: 1.363, rmse_f_tr: 1.665, rmse_cf_tr: 1.400, ite_te: 1.339, ate_te: 0.222, pehe_te: 1.422, dt: 4.727
+Improved validation bound, old: -16.474, new: -16.170
+Epoch: 31/100, log p(x) >= 16.230, ite_tr: 1.356, ate_tr: 0.021, pehe_tr: 1.510, rmse_f_tr: 1.604, rmse_cf_tr: 1.417, ite_te: 1.348, ate_te: 0.295, pehe_te: 1.440, dt: 4.816
+Epoch: 41/100, log p(x) >= 16.371, ite_tr: 1.365, ate_tr: 0.244, pehe_tr: 1.429, rmse_f_tr: 1.565, rmse_cf_tr: 1.438, ite_te: 1.291, ate_te: 0.023, pehe_te: 1.399, dt: 0.821
+Epoch: 51/100, log p(x) >= 15.920, ite_tr: 1.382, ate_tr: 0.460, pehe_tr: 1.468, rmse_f_tr: 1.474, rmse_cf_tr: 1.414, ite_te: 1.436, ate_te: 0.139, pehe_te: 1.656, dt: 0.600
+Epoch: 61/100, log p(x) >= 15.550, ite_tr: 1.419, ate_tr: 0.451, pehe_tr: 1.532, rmse_f_tr: 1.552, rmse_cf_tr: 1.488, ite_te: 1.302, ate_te: 0.237, pehe_te: 1.244, dt: 0.623
+Epoch: 71/100, log p(x) >= 15.896, ite_tr: 1.342, ate_tr: 0.210, pehe_tr: 1.408, rmse_f_tr: 1.419, rmse_cf_tr: 1.406, ite_te: 1.305, ate_te: 0.054, pehe_te: 1.456, dt: 0.618
+Epoch: 81/100, log p(x) >= 15.027, ite_tr: 1.477, ate_tr: 0.391, pehe_tr: 1.583, rmse_f_tr: 1.527, rmse_cf_tr: 1.562, ite_te: 1.492, ate_te: 0.010, pehe_te: 1.401, dt: 0.609
+Epoch: 91/100, log p(x) >= 14.484, ite_tr: 1.339, ate_tr: 0.382, pehe_tr: 1.480, rmse_f_tr: 1.420, rmse_cf_tr: 1.397, ite_te: 1.185, ate_te: 0.065, pehe_te: 1.219, dt: 0.637
+Replication: 4/10, tr_ite: 1.267, tr_ate: 0.027, tr_pehe: 1.159, te_ite: 1.255, te_ate: 0.328, te_pehe: 1.085
+Replication 5/10
+Improved validation bound, old: -inf, new: -19.272
+Epoch: 1/100, log p(x) >= 23.308, ite_tr: 1.869, ate_tr: 0.050, pehe_tr: 2.755, rmse_f_tr: 2.682, rmse_cf_tr: 1.819, ite_te: 2.080, ate_te: 0.024, pehe_te: 3.006, dt: 5.463
+Improved validation bound, old: -19.272, new: -16.790
+Epoch: 11/100, log p(x) >= 17.792, ite_tr: 1.627, ate_tr: 0.370, pehe_tr: 2.268, rmse_f_tr: 2.354, rmse_cf_tr: 1.648, ite_te: 1.802, ate_te: 0.390, pehe_te: 2.354, dt: 4.535
+Epoch: 21/100, log p(x) >= 16.835, ite_tr: 1.630, ate_tr: 0.460, pehe_tr: 2.203, rmse_f_tr: 2.151, rmse_cf_tr: 1.696, ite_te: 1.659, ate_te: 0.197, pehe_te: 2.345, dt: 0.581
+Improved validation bound, old: -16.790, new: -16.365
+Epoch: 31/100, log p(x) >= 16.376, ite_tr: 1.629, ate_tr: 0.554, pehe_tr: 2.124, rmse_f_tr: 2.054, rmse_cf_tr: 1.661, ite_te: 1.553, ate_te: 0.818, pehe_te: 2.103, dt: 5.425
+Improved validation bound, old: -16.365, new: -16.135
+Epoch: 41/100, log p(x) >= 15.892, ite_tr: 1.529, ate_tr: 0.336, pehe_tr: 2.031, rmse_f_tr: 2.034, rmse_cf_tr: 1.555, ite_te: 1.643, ate_te: 0.076, pehe_te: 1.960, dt: 5.634
+Epoch: 51/100, log p(x) >= 16.178, ite_tr: 1.589, ate_tr: 0.616, pehe_tr: 2.078, rmse_f_tr: 1.928, rmse_cf_tr: 1.681, ite_te: 1.765, ate_te: 0.579, pehe_te: 2.112, dt: 0.690
+Epoch: 61/100, log p(x) >= 16.037, ite_tr: 1.640, ate_tr: 0.436, pehe_tr: 2.012, rmse_f_tr: 1.898, rmse_cf_tr: 1.649, ite_te: 1.525, ate_te: 0.759, pehe_te: 2.045, dt: 0.609
+Epoch: 71/100, log p(x) >= 16.499, ite_tr: 1.554, ate_tr: 0.219, pehe_tr: 2.018, rmse_f_tr: 1.925, rmse_cf_tr: 1.603, ite_te: 1.598, ate_te: 0.415, pehe_te: 1.871, dt: 0.599
+Epoch: 81/100, log p(x) >= 15.097, ite_tr: 1.605, ate_tr: 0.152, pehe_tr: 1.832, rmse_f_tr: 1.865, rmse_cf_tr: 1.636, ite_te: 1.655, ate_te: 0.137, pehe_te: 1.936, dt: 0.651
+Epoch: 91/100, log p(x) >= 15.061, ite_tr: 1.563, ate_tr: 0.536, pehe_tr: 1.997, rmse_f_tr: 1.822, rmse_cf_tr: 1.600, ite_te: 1.718, ate_te: 0.667, pehe_te: 2.140, dt: 0.618
+Replication: 5/10, tr_ite: 1.426, tr_ate: 0.271, tr_pehe: 1.574, te_ite: 1.487, te_ate: 0.308, te_pehe: 1.646
+Replication 6/10
+Improved validation bound, old: -inf, new: -19.363
+Epoch: 1/100, log p(x) >= 23.353, ite_tr: 1.339, ate_tr: 0.248, pehe_tr: 1.260, rmse_f_tr: 1.414, rmse_cf_tr: 1.411, ite_te: 1.417, ate_te: 0.176, pehe_te: 1.181, dt: 4.580
+Improved validation bound, old: -19.363, new: -16.800
+Epoch: 11/100, log p(x) >= 17.432, ite_tr: 1.160, ate_tr: 0.458, pehe_tr: 0.961, rmse_f_tr: 1.160, rmse_cf_tr: 1.265, ite_te: 1.435, ate_te: 0.555, pehe_te: 0.972, dt: 4.485
+Improved validation bound, old: -16.800, new: -16.741
+Epoch: 21/100, log p(x) >= 16.737, ite_tr: 1.045, ate_tr: 0.055, pehe_tr: 0.676, rmse_f_tr: 1.110, rmse_cf_tr: 1.152, ite_te: 1.230, ate_te: 0.107, pehe_te: 0.705, dt: 5.237
+Improved validation bound, old: -16.741, new: -16.090
+Epoch: 31/100, log p(x) >= 16.236, ite_tr: 1.062, ate_tr: 0.032, pehe_tr: 0.760, rmse_f_tr: 1.100, rmse_cf_tr: 1.141, ite_te: 1.280, ate_te: 0.038, pehe_te: 0.799, dt: 4.556
+Epoch: 41/100, log p(x) >= 16.078, ite_tr: 1.130, ate_tr: 0.125, pehe_tr: 0.817, rmse_f_tr: 1.068, rmse_cf_tr: 1.176, ite_te: 1.271, ate_te: 0.162, pehe_te: 0.790, dt: 0.607
+Improved validation bound, old: -16.090, new: -16.068
+Epoch: 51/100, log p(x) >= 15.770, ite_tr: 1.094, ate_tr: 0.056, pehe_tr: 0.851, rmse_f_tr: 1.073, rmse_cf_tr: 1.130, ite_te: 1.397, ate_te: 0.012, pehe_te: 0.744, dt: 4.087
+Epoch: 61/100, log p(x) >= 15.553, ite_tr: 1.094, ate_tr: 0.266, pehe_tr: 0.892, rmse_f_tr: 1.045, rmse_cf_tr: 1.226, ite_te: 1.409, ate_te: 0.188, pehe_te: 0.727, dt: 0.585
+Epoch: 71/100, log p(x) >= 17.296, ite_tr: 1.127, ate_tr: 0.063, pehe_tr: 0.828, rmse_f_tr: 1.031, rmse_cf_tr: 1.207, ite_te: 1.442, ate_te: 0.045, pehe_te: 0.830, dt: 0.648
+Epoch: 81/100, log p(x) >= 14.865, ite_tr: 1.157, ate_tr: 0.191, pehe_tr: 0.963, rmse_f_tr: 0.987, rmse_cf_tr: 1.223, ite_te: 1.418, ate_te: 0.147, pehe_te: 0.965, dt: 0.619
+Epoch: 91/100, log p(x) >= 14.910, ite_tr: 1.094, ate_tr: 0.024, pehe_tr: 0.912, rmse_f_tr: 1.021, rmse_cf_tr: 1.171, ite_te: 1.385, ate_te: 0.031, pehe_te: 0.936, dt: 0.805
+Replication: 6/10, tr_ite: 1.025, tr_ate: 0.071, tr_pehe: 0.549, te_ite: 1.306, te_ate: 0.086, te_pehe: 0.548
+Replication 7/10
+Improved validation bound, old: -inf, new: -18.934
+Epoch: 1/100, log p(x) >= 23.154, ite_tr: 1.278, ate_tr: 0.296, pehe_tr: 0.991, rmse_f_tr: 1.177, rmse_cf_tr: 1.278, ite_te: 1.285, ate_te: 0.138, pehe_te: 0.889, dt: 4.372
+Improved validation bound, old: -18.934, new: -16.903
+Epoch: 11/100, log p(x) >= 17.489, ite_tr: 1.128, ate_tr: 0.286, pehe_tr: 0.666, rmse_f_tr: 1.090, rmse_cf_tr: 1.137, ite_te: 1.060, ate_te: 0.314, pehe_te: 0.665, dt: 3.751
+Epoch: 21/100, log p(x) >= 16.900, ite_tr: 1.148, ate_tr: 0.115, pehe_tr: 0.643, rmse_f_tr: 1.057, rmse_cf_tr: 1.165, ite_te: 1.078, ate_te: 0.019, pehe_te: 0.575, dt: 0.633
+Improved validation bound, old: -16.903, new: -16.519
+Epoch: 31/100, log p(x) >= 16.407, ite_tr: 1.099, ate_tr: 0.169, pehe_tr: 0.559, rmse_f_tr: 1.034, rmse_cf_tr: 1.122, ite_te: 1.016, ate_te: 0.179, pehe_te: 0.631, dt: 4.323
+Epoch: 41/100, log p(x) >= 16.096, ite_tr: 1.180, ate_tr: 0.122, pehe_tr: 0.690, rmse_f_tr: 1.024, rmse_cf_tr: 1.173, ite_te: 1.085, ate_te: 0.191, pehe_te: 0.638, dt: 0.638
+Improved validation bound, old: -16.519, new: -16.377
+Epoch: 51/100, log p(x) >= 15.637, ite_tr: 1.177, ate_tr: 0.159, pehe_tr: 0.752, rmse_f_tr: 1.016, rmse_cf_tr: 1.182, ite_te: 1.056, ate_te: 0.188, pehe_te: 0.785, dt: 3.985
+Epoch: 61/100, log p(x) >= 15.992, ite_tr: 1.194, ate_tr: 0.316, pehe_tr: 0.853, rmse_f_tr: 0.948, rmse_cf_tr: 1.203, ite_te: 1.198, ate_te: 0.343, pehe_te: 0.879, dt: 0.755
+Epoch: 71/100, log p(x) >= 15.089, ite_tr: 1.231, ate_tr: 0.453, pehe_tr: 0.899, rmse_f_tr: 1.001, rmse_cf_tr: 1.236, ite_te: 1.171, ate_te: 0.572, pehe_te: 0.976, dt: 0.782
+Epoch: 81/100, log p(x) >= 14.713, ite_tr: 1.176, ate_tr: 0.021, pehe_tr: 0.787, rmse_f_tr: 0.955, rmse_cf_tr: 1.205, ite_te: 1.105, ate_te: 0.028, pehe_te: 0.652, dt: 0.622
+Epoch: 91/100, log p(x) >= 14.568, ite_tr: 1.195, ate_tr: 0.343, pehe_tr: 0.924, rmse_f_tr: 0.941, rmse_cf_tr: 1.217, ite_te: 1.158, ate_te: 0.416, pehe_te: 0.816, dt: 1.001
+Replication: 7/10, tr_ite: 1.107, tr_ate: 0.138, tr_pehe: 0.573, te_ite: 1.086, te_ate: 0.154, te_pehe: 0.589
+Replication 8/10
+Improved validation bound, old: -inf, new: -19.206
+Epoch: 1/100, log p(x) >= 23.849, ite_tr: 1.643, ate_tr: 0.325, pehe_tr: 2.158, rmse_f_tr: 2.121, rmse_cf_tr: 1.673, ite_te: 1.541, ate_te: 0.238, pehe_te: 1.964, dt: 4.918
+Improved validation bound, old: -19.206, new: -17.146
+Epoch: 11/100, log p(x) >= 17.513, ite_tr: 1.436, ate_tr: 0.218, pehe_tr: 1.478, rmse_f_tr: 1.621, rmse_cf_tr: 1.384, ite_te: 1.500, ate_te: 0.547, pehe_te: 1.699, dt: 4.163
+Improved validation bound, old: -17.146, new: -16.869
+Epoch: 21/100, log p(x) >= 16.710, ite_tr: 1.382, ate_tr: 0.390, pehe_tr: 1.474, rmse_f_tr: 1.541, rmse_cf_tr: 1.375, ite_te: 1.409, ate_te: 0.388, pehe_te: 1.191, dt: 4.076
+Epoch: 31/100, log p(x) >= 16.268, ite_tr: 1.392, ate_tr: 0.329, pehe_tr: 1.334, rmse_f_tr: 1.530, rmse_cf_tr: 1.316, ite_te: 1.338, ate_te: 0.514, pehe_te: 1.558, dt: 0.677
+Improved validation bound, old: -16.869, new: -16.782
+Epoch: 41/100, log p(x) >= 15.945, ite_tr: 1.460, ate_tr: 0.134, pehe_tr: 1.405, rmse_f_tr: 1.432, rmse_cf_tr: 1.402, ite_te: 1.694, ate_te: 0.210, pehe_te: 1.316, dt: 4.251
+Epoch: 51/100, log p(x) >= 15.613, ite_tr: 1.472, ate_tr: 0.231, pehe_tr: 1.562, rmse_f_tr: 1.451, rmse_cf_tr: 1.411, ite_te: 1.597, ate_te: 0.330, pehe_te: 1.591, dt: 0.659
+Epoch: 61/100, log p(x) >= 15.761, ite_tr: 1.414, ate_tr: 0.121, pehe_tr: 1.384, rmse_f_tr: 1.443, rmse_cf_tr: 1.363, ite_te: 1.785, ate_te: 0.248, pehe_te: 1.256, dt: 0.659
+Epoch: 71/100, log p(x) >= 15.808, ite_tr: 1.449, ate_tr: 0.020, pehe_tr: 1.413, rmse_f_tr: 1.372, rmse_cf_tr: 1.354, ite_te: 1.641, ate_te: 0.035, pehe_te: 1.426, dt: 0.606
+Epoch: 81/100, log p(x) >= 14.840, ite_tr: 1.400, ate_tr: 0.180, pehe_tr: 1.450, rmse_f_tr: 1.404, rmse_cf_tr: 1.347, ite_te: 1.541, ate_te: 0.229, pehe_te: 1.453, dt: 0.602
+Epoch: 91/100, log p(x) >= 14.391, ite_tr: 1.495, ate_tr: 0.220, pehe_tr: 1.467, rmse_f_tr: 1.335, rmse_cf_tr: 1.354, ite_te: 1.593, ate_te: 0.129, pehe_te: 1.351, dt: 0.624
+Replication: 8/10, tr_ite: 1.354, tr_ate: 0.091, tr_pehe: 1.049, te_ite: 1.532, te_ate: 0.116, te_pehe: 0.963
+Replication 9/10
+Improved validation bound, old: -inf, new: -19.345
+Epoch: 1/100, log p(x) >= 23.271, ite_tr: 11.918, ate_tr: 1.545, pehe_tr: 24.112, rmse_f_tr: 20.663, rmse_cf_tr: 11.892, ite_te: 9.086, ate_te: 0.139, pehe_te: 19.318, dt: 4.219
+Improved validation bound, old: -19.345, new: -17.579
+Epoch: 11/100, log p(x) >= 17.382, ite_tr: 9.184, ate_tr: 0.811, pehe_tr: 16.775, rmse_f_tr: 14.453, rmse_cf_tr: 9.151, ite_te: 7.142, ate_te: 2.426, pehe_te: 14.272, dt: 3.717
+Improved validation bound, old: -17.579, new: -16.996
+Epoch: 21/100, log p(x) >= 16.700, ite_tr: 8.863, ate_tr: 0.188, pehe_tr: 16.439, rmse_f_tr: 14.206, rmse_cf_tr: 8.806, ite_te: 7.792, ate_te: 1.762, pehe_te: 15.286, dt: 4.181
+Improved validation bound, old: -16.996, new: -16.557
+Epoch: 31/100, log p(x) >= 16.327, ite_tr: 9.541, ate_tr: 1.001, pehe_tr: 16.665, rmse_f_tr: 13.876, rmse_cf_tr: 9.502, ite_te: 7.815, ate_te: 0.245, pehe_te: 12.665, dt: 4.263
+Epoch: 41/100, log p(x) >= 16.088, ite_tr: 8.745, ate_tr: 0.505, pehe_tr: 16.140, rmse_f_tr: 13.681, rmse_cf_tr: 8.710, ite_te: 5.896, ate_te: 0.638, pehe_te: 13.035, dt: 0.640
+Epoch: 51/100, log p(x) >= 15.786, ite_tr: 8.546, ate_tr: 0.870, pehe_tr: 16.144, rmse_f_tr: 13.721, rmse_cf_tr: 8.555, ite_te: 5.626, ate_te: 1.195, pehe_te: 10.988, dt: 0.699
+Epoch: 61/100, log p(x) >= 16.394, ite_tr: 8.678, ate_tr: 0.615, pehe_tr: 16.453, rmse_f_tr: 14.111, rmse_cf_tr: 8.681, ite_te: 7.519, ate_te: 3.446, pehe_te: 13.916, dt: 0.651
+Epoch: 71/100, log p(x) >= 15.643, ite_tr: 7.918, ate_tr: 0.806, pehe_tr: 15.209, rmse_f_tr: 13.271, rmse_cf_tr: 7.926, ite_te: 6.275, ate_te: 1.387, pehe_te: 10.214, dt: 0.701
+Epoch: 81/100, log p(x) >= 14.925, ite_tr: 8.782, ate_tr: 2.081, pehe_tr: 16.487, rmse_f_tr: 14.154, rmse_cf_tr: 8.815, ite_te: 6.454, ate_te: 0.091, pehe_te: 11.677, dt: 0.744
+Epoch: 91/100, log p(x) >= 15.693, ite_tr: 8.554, ate_tr: 0.404, pehe_tr: 14.338, rmse_f_tr: 11.743, rmse_cf_tr: 8.527, ite_te: 6.388, ate_te: 0.380, pehe_te: 12.278, dt: 0.755
+Replication: 9/10, tr_ite: 8.338, tr_ate: 0.779, tr_pehe: 15.433, te_ite: 6.210, te_ate: 0.049, te_pehe: 11.158
+Replication 10/10
+Improved validation bound, old: -inf, new: -19.007
+Epoch: 1/100, log p(x) >= 23.292, ite_tr: 4.345, ate_tr: 0.424, pehe_tr: 8.313, rmse_f_tr: 7.433, rmse_cf_tr: 4.359, ite_te: 3.955, ate_te: 1.333, pehe_te: 7.513, dt: 5.137
+Improved validation bound, old: -19.007, new: -17.340
+Epoch: 11/100, log p(x) >= 17.515, ite_tr: 3.365, ate_tr: 0.047, pehe_tr: 6.522, rmse_f_tr: 5.810, rmse_cf_tr: 3.452, ite_te: 3.764, ate_te: 1.221, pehe_te: 6.762, dt: 4.351
+Improved validation bound, old: -17.340, new: -16.497
+Epoch: 21/100, log p(x) >= 16.619, ite_tr: 2.930, ate_tr: 0.795, pehe_tr: 5.645, rmse_f_tr: 5.052, rmse_cf_tr: 3.055, ite_te: 2.244, ate_te: 0.631, pehe_te: 6.038, dt: 4.995
+Epoch: 31/100, log p(x) >= 16.282, ite_tr: 3.044, ate_tr: 0.183, pehe_tr: 5.324, rmse_f_tr: 4.802, rmse_cf_tr: 3.082, ite_te: 2.816, ate_te: 1.488, pehe_te: 5.920, dt: 0.678
+Epoch: 41/100, log p(x) >= 15.988, ite_tr: 3.011, ate_tr: 0.125, pehe_tr: 5.143, rmse_f_tr: 4.575, rmse_cf_tr: 3.057, ite_te: 2.323, ate_te: 1.288, pehe_te: 5.000, dt: 0.702
+Epoch: 51/100, log p(x) >= 15.601, ite_tr: 2.933, ate_tr: 0.323, pehe_tr: 5.236, rmse_f_tr: 4.657, rmse_cf_tr: 3.012, ite_te: 3.525, ate_te: 1.287, pehe_te: 6.023, dt: 0.760
+Epoch: 61/100, log p(x) >= 15.314, ite_tr: 2.927, ate_tr: 0.562, pehe_tr: 5.441, rmse_f_tr: 4.812, rmse_cf_tr: 2.980, ite_te: 2.754, ate_te: 1.368, pehe_te: 5.029, dt: 0.640
+Epoch: 71/100, log p(x) >= 15.323, ite_tr: 2.657, ate_tr: 0.008, pehe_tr: 5.017, rmse_f_tr: 4.577, rmse_cf_tr: 2.704, ite_te: 2.984, ate_te: 1.280, pehe_te: 6.116, dt: 0.750
+Epoch: 81/100, log p(x) >= 14.757, ite_tr: 3.095, ate_tr: 0.386, pehe_tr: 5.100, rmse_f_tr: 4.357, rmse_cf_tr: 3.173, ite_te: 2.592, ate_te: 0.817, pehe_te: 5.148, dt: 0.663
+Epoch: 91/100, log p(x) >= 14.405, ite_tr: 2.741, ate_tr: 0.145, pehe_tr: 4.857, rmse_f_tr: 4.343, rmse_cf_tr: 2.788, ite_te: 3.283, ate_te: 0.592, pehe_te: 5.237, dt: 0.718
+Replication: 10/10, tr_ite: 2.515, tr_ate: 0.615, tr_pehe: 4.409, te_ite: 2.648, te_ate: 0.597, te_pehe: 4.737
+CEVAE model total scores on IHDP1000
+train ITE: 2.041+-0.713, train ATE: 0.237+-0.080, train PEHE: 2.673+-1.464
+test ITE: 1.879+-0.504, test ATE: 0.207+-0.052, test PEHE: 2.284+-1.063
+
+============================================================

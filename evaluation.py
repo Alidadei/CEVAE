@@ -2,12 +2,13 @@ import numpy as np
 
 
 class Evaluator(object):
-    def __init__(self, y, t, y_cf=None, mu0=None, mu1=None):
+    def __init__(self, y, t, y_cf=None, mu0=None, mu1=None, true_ate=None):
         self.y = y
         self.t = t
         self.y_cf = y_cf
         self.mu0 = mu0
         self.mu1 = mu1
+        self.true_ate = true_ate  # For datasets like JOBS that only have ATE
         if mu0 is not None and mu1 is not None:
             self.true_ite = mu1 - mu0
 
@@ -28,6 +29,10 @@ class Evaluator(object):
     def y_errors(self, y0, y1):
         ypred = (1 - self.t) * y0 + self.t * y1
         ypred_cf = self.t * y0 + (1 - self.t) * y1
+        # If no counterfactuals, only return factual RMSE
+        if self.y_cf is None:
+            rmse_factual = np.sqrt(np.mean(np.square(ypred - self.y)))
+            return rmse_factual, None
         return self.y_errors_pcf(ypred, ypred_cf)
 
     def y_errors_pcf(self, ypred, ypred_cf):
@@ -37,11 +42,20 @@ class Evaluator(object):
 
     def calc_stats(self, ypred1, ypred0):
         if self.mu0 is None or self.mu1 is None:
-            # For datasets without counterfactuals, return placeholder values
-            # Only factual outcome RMSE can be computed
+            # For datasets without counterfactuals
             ypred = (1 - self.t) * ypred0 + self.t * ypred1
             rmse_factual = np.sqrt(np.mean(np.square(ypred - self.y)))
-            return rmse_factual, rmse_factual, rmse_factual  # Return RMSE as placeholder for all metrics
+
+            # If we have true ATE (like JOBS dataset), calculate ATE error
+            if self.true_ate is not None:
+                pred_ate = np.mean(ypred1 - ypred0)
+                ate_error = np.abs(pred_ate - self.true_ate)
+                # Return: RMSE (placeholder for ITE), ATE error, RMSE (placeholder for PEHE)
+                return rmse_factual, ate_error, rmse_factual
+
+            # No ground truth at all, return RMSE for all metrics
+            return rmse_factual, rmse_factual, rmse_factual
+
         ite = self.rmse_ite(ypred1, ypred0)
         ate = self.abs_ate(ypred1, ypred0)
         pehe = self.pehe(ypred1, ypred0)

@@ -8,15 +8,30 @@
 
 ## 快速开始
 
+### 方法一：使用已配置好的环境（推荐）
+
+```bash
+# 1. 激活现有环境
+conda activate cevae
+
+# 2. 验证环境
+python tests/verify_env.py
+
+# 3. 运行实验
+python cevae_ihdp.py -dataset ihdp
+```
+
+### 方法二：创建新环境
+
 ```bash
 # 1. 创建conda环境
-conda create -n cevae python=3.5 -y
+conda create -n cevae python=3.6 -y
 
 # 2. 安装依赖
 conda activate cevae
 
 # 3. 安装核心包
-pip install tensorflow==1.1.0 protobuf==3.5.2
+pip install tensorflow==1.2.0 protobuf==3.5.2
 pip install edward==1.3.1 progressbar2==3.34.3
 
 # 4. 安装科学计算包（通过conda，避免编译问题）
@@ -35,21 +50,29 @@ python cevae_ihdp.py
 
 ### 第一步：创建Conda环境
 
-**为什么需要Python 3.5？**
+**Python版本说明**：
+- 原项目使用 Python 3.5 + TensorFlow 1.1.0
+- 当前配置使用 Python 3.6 + TensorFlow 1.2.1（兼容）
+- 两种配置都可以正常工作
 
-TensorFlow 1.1.0 只支持 Python 3.5，不支持更高版本。
+**使用现有环境**：
+```bash
+# 直接激活已配置好的环境
+conda activate cevae
+```
 
+**创建新环境**：
 ```bash
 # Windows
-C:\Users\<username>\miniconda3\condabin\conda.bat create -n cevae python=3.5 -y
+C:\Users\<username>\miniconda3\condabin\conda.bat create -n cevae python=3.6 -y
 
 # Linux/Mac
-conda create -n cevae python=3.5 -y
+conda create -n cevae python=3.6 -y
 ```
 
 **常见问题**：
-- 如果Python 3.5不可用，尝试 `python=3.5.6` 或 `python=3.6`
-- Python 3.6 需要使用 TensorFlow 1.2+，可能与代码不兼容
+- Python 3.5 不可用时，使用 `python=3.6` + TensorFlow 1.2.x
+- Python 3.7+ 不兼容，Edward 1.3.1 需要 TensorFlow 1.x
 
 ---
 
@@ -65,25 +88,26 @@ source activate cevae
 
 ---
 
-### 第三步：安装TensorFlow 1.1.0
+### 第三步：安装TensorFlow
 
 **关键依赖顺序**：必须先安装旧版protobuf，否则会报错！
 
+**Python 3.5 + TensorFlow 1.1.0**（原配置）：
 ```bash
-# 方法1：先安装兼容的protobuf
-pip install protobuf==3.5.2
-pip install tensorflow==1.1.0
-
-# 方法2：一行命令
 pip install protobuf==3.5.2 tensorflow==1.1.0
+```
+
+**Python 3.6 + TensorFlow 1.2.1**（当前配置）：
+```bash
+pip install protobuf==3.5.2 tensorflow==1.2.1
 ```
 
 **常见错误与解决方案**：
 
 | 错误信息 | 原因 | 解决方案 |
 |----------|------|----------|
-| `protobuf requires Python '>=3.7'` | pip自动安装新版protobuf | `pip install protobuf==3.5.2 tensorflow==1.1.0` |
-| `no matching distribution found` | Python版本不对 | 使用Python 3.5 |
+| `protobuf requires Python '>=3.7'` | pip自动安装新版protobuf | `pip install protobuf==3.5.2 tensorflow==1.2.1` |
+| `no matching distribution found` | Python版本不对 | 使用Python 3.5 或 3.6 |
 
 ---
 
@@ -302,7 +326,40 @@ The TensorFlow library wasn't compiled to use SSE instructions...
 
 ---
 
-### 问题5: CUDA/GPU相关错误
+### 问题5: GPU配置与使用
+
+**GPU自动配置**：
+
+代码已内置GPU配置，会自动检测和使用GPU：
+
+```python
+# GPU配置（已内置在cevae_ihdp.py）
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True  # 动态分配GPU内存
+config.gpu_options.per_process_gpu_memory_fraction = 0.9  # 使用最多90%的GPU内存
+config.allow_soft_placement = True  # GPU不可用时自动使用CPU
+```
+
+**运行时会显示GPU信息**：
+```
+============================================================
+GPU Configuration:
+- Allow growth: Enabled
+- Memory fraction: 90%
+- Soft placement: Enabled
+============================================================
+```
+
+**如需使用GPU加速**，需要安装：
+1. NVIDIA GPU 驱动
+2. CUDA Toolkit 8.0（TF 1.2兼容）
+3. cuDNN 6.0
+
+**如无GPU**，代码会自动使用CPU训练，速度稍慢但不影响结果。
+
+---
+
+### 问题6: CUDA/GPU相关错误
 
 **现象**：
 ```
@@ -396,6 +453,12 @@ conda env create -f cevae_environment.yml
 
 ---
 
-**文档版本**: 1.0
-**最后更新**: 2026-03-12
-**测试环境**: Windows 11, Miniconda3, Python 3.5.6
+**文档版本**: 1.2
+**最后更新**: 2025-03-16
+**测试环境**: Windows 10, Miniconda3, Python 3.6.15
+**环境名称**: `cevae`
+**更新内容**:
+- 环境名称统一为 `cevae`
+- TensorFlow版本为1.2.1
+- 添加GPU自动配置说明
+- 模型保存路径更新（每个重复实验独立保存）

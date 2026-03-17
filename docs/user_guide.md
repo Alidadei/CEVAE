@@ -1,6 +1,6 @@
 # CEVAE多数据集训练操作指南
 
-**最后更新**: 2026-03-13
+**最后更新**: 2025-03-16
 **适用数据集**: IHDP, IHDP1000, TWINS
 
 ---
@@ -125,13 +125,26 @@ test ITE: 1.531+-0.355, test ATE: 0.340+-0.110, test PEHE: 2.023+-0.969
 
 ### 1.4 模型保存位置
 
+**重要更新**: 每个重复实验现在保存到独立的模型文件，便于分别复现和对比。
+
 ```
-models/cevae_ihdp/
-├── checkpoint
-├── cevae_ihdp.meta
-├── cevae_ihdp.data-00000-of-00001
-└── cevae_ihdp.index
+models/
+├── cevae_ihdp_rep001/
+│   ├── checkpoint
+│   ├── cevae_ihdp_rep001.meta
+│   ├── cevae_ihdp_rep001.data-00000-of-00001
+│   └── cevae_ihdp_rep001.index
+├── cevae_ihdp_rep002/
+│   └── ...
+├── ...
+└── cevae_ihdp_rep010/
+    └── ...
 ```
+
+**说明**:
+- 每个重复实验的模型独立保存，不会互相覆盖
+- 格式: `cevae_{dataset}_rep{rep_number}`
+- 单个数据集实验（如TWINS）仍使用: `cevae_{dataset}/`
 
 ---
 
@@ -289,6 +302,7 @@ Replication 10/10
 
 ### 2.7 模型保存位置
 
+**合并模式**:
 ```
 models/cevae_ihdp1000/
 ├── checkpoint
@@ -297,7 +311,17 @@ models/cevae_ihdp1000/
 └── cevae_ihdp1000.index
 ```
 
-分离模式下，每个replication会覆盖保存同一个模型文件。
+**分离模式**:
+```
+models/
+├── cevae_ihdp1000_rep001/
+│   └── ...
+├── cevae_ihdp1000_rep002/
+│   └── ...
+└── ...
+```
+
+每个replication独立保存，便于对比分析。
 
 ---
 
@@ -346,6 +370,8 @@ models/cevae_twins/
 ├── cevae_twins.data-00000-of-00001
 └── cevae_twins.index
 ```
+
+**注意**: TWINS数据集实际有53个特征（44个二值特征 + 9个连续特征），而非原文档中的50个。
 
 ---
 
@@ -658,16 +684,24 @@ python cevae_ihdp.py -dataset ihdp -epochs 200
 
 ```
 models/
-├── cevae_ihdp/              # IHDP模型
+├── cevae_ihdp_rep001/       # IHDP 重复实验1
 │   ├── checkpoint
-│   ├── cevae_ihdp.meta       # 958KB - 模型结构
-│   ├── cevae_ihdp.data-*      # 6.6MB - 模型权重
-│   └── cevae_ihdp.index      # 6.8KB - 索引
+│   ├── cevae_ihdp_rep001.meta       # ~984KB - 模型结构
+│   ├── cevae_ihdp_rep001.data-*      # ~6.9MB - 模型权重
+│   └── cevae_ihdp_rep001.index      # ~6.8KB - 索引
 │
-├── cevae_ihdp1000/          # IHDP1000模型
+├── cevae_ihdp_rep002/       # IHDP 重复实验2
 │   └── ...
 │
-└── cevae_twins/             # TWINS模型
+├── ... (rep003-rep010)
+│
+├── cevae_ihdp1000/          # IHDP1000 合并模式
+│   └── ...
+│
+├── cevae_ihdp1000_rep001/   # IHDP1000 分离模式
+│   └── ...
+│
+└── cevae_twins/             # TWINS (单次实验)
     └── ...
 ```
 
@@ -922,10 +956,11 @@ ls -lt record/*.txt | head -1 | xargs cat
 
 ---
 
-**文档版本**: 1.4
-**最后更新**: 2026-03-13
+**文档版本**: 1.6
+**最后更新**: 2025-03-16
 **更新内容**:
-- 添加 IHDP1000 分离模式说明
-- 添加实验结果自动记录功能
-- 快速开始部分更新，突出自动记录工具
-- 新增 `-earl` 和 `-print_every` 参数详细说明
+- **重要**: 模型保存格式更新，每个重复实验独立保存
+- 环境名称统一为 `cevae`
+- 添加GPU配置说明
+- TWINS数据集特征数更正为53个
+- IHDP1000分离模式模型保存路径更新

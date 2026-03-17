@@ -9,8 +9,11 @@ import tensorflow as tf
 
 from edward.models import Bernoulli, Normal
 from progressbar import ETA, Bar, Percentage, ProgressBar
+import os
+import sys
+from datetime import datetime
 
-from datasets import IHDP, IHDP1000, TWINS
+from datasets import IHDP, IHDP100, IHDP1000, JOBS, TWINS
 from evaluation import Evaluator
 import numpy as np
 import time
@@ -19,47 +22,82 @@ from scipy.stats import sem
 from utils import fc_net, get_y0_y1
 from argparse import ArgumentParser
 
+# Training output collector
+training_output = []
+epoch_outputs = []
+replication_results = []
+
 parser = ArgumentParser()
-parser.add_argument('-dataset', choices=['ihdp', 'ihdp1000', 'twins'], default='ihdp', help='Dataset to use')
-parser.add_argument('-reps', type=int, default=10, help='Number of replications (for IHDP only)')
+parser.add_argument('-dataset', choices=['ihdp', 'ihdp100', 'ihdp1000', 'jobs', 'twins'], default='ihdp', help='Dataset to use')
+parser.add_argument('-reps', type=int, default=10, help='Number of replications (for IHDP/IHDP100)')
+parser.add_argument('-n_reps', type=int, default=None,
+                    help='Number of replications to use for IHDP1000/JOBS (default: all)')
 parser.add_argument('-earl', type=int, default=10)
 parser.add_argument('-lr', type=float, default=0.001)
 parser.add_argument('-opt', choices=['adam', 'adamax'], default='adam')
 parser.add_argument('-epochs', type=int, default=100)
 parser.add_argument('-print_every', type=int, default=10)
-parser.add_argument('-separate_reps', action='store_true',
-                    help='For IHDP1000: train each replication separately (like IHDP)')
-parser.add_argument('-n_reps', type=int, default=None,
-                    help='For IHDP1000: number of replications to use (default: all 1000)')
 args = parser.parse_args()
 
 args.true_post = True
+
+# ============================================================================
+# GPU Configuration
+# ============================================================================
+# Configure GPU settings for optimized training
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True  # Dynamically allocate GPU memory
+config.gpu_options.per_process_gpu_memory_fraction = 0.9  # Use up to 90% of GPU memory
+config.allow_soft_placement = True  # Allow operations to be placed on CPU if GPU is unavailable
+config.log_device_placement = False  # Set to True for debugging device placement
+
+# Print GPU information
+print('=' * 60)
+print('GPU Configuration:')
+print('- Allow growth: Enabled')
+print('- Memory fraction: 90%')
+print('- Soft placement: Enabled')
+print('=' * 60)
+# ============================================================================
 
 # Select dataset
 if args.dataset == 'ihdp':
     dataset = IHDP(replications=args.reps)
     dimx = 25
     num_replications = args.reps
+elif args.dataset == 'ihdp100':
+    n_reps = args.n_reps if args.n_reps else 100
+    dataset = IHDP100(n_replications=n_reps)
+    dimx = 25
+    num_replications = n_reps
+    print('Using IHDP100: {} replications (separate mode)'.format(n_reps))
 elif args.dataset == 'ihdp1000':
-    # Use separate replications mode if flag is set
-    if args.separate_reps:
-        n_reps = args.n_reps if args.n_reps else 100  # Default to 100 replications for separate mode
-        dataset = IHDP1000(use_separate_replications=True, n_replications=n_reps)
-        dimx = 25
-        num_replications = n_reps
-        print('Using IHDP1000 in separate replications mode: {} replications'.format(n_reps))
-    else:
-        dataset = IHDP1000()
-        dimx = 25
-        num_replications = 1  # Single large dataset (combined mode)
-        print('Using IHDP1000 in combined mode (all replications merged)')
+    n_reps = args.n_reps if args.n_reps else 1000
+    dataset = IHDP1000(n_replications=n_reps)
+    dimx = 25
+    num_replications = n_reps
+    print('Using IHDP1000: {} replications (separate mode)'.format(n_reps))
+elif args.dataset == 'jobs':
+    n_reps = args.n_reps if args.n_reps else 10
+    dataset = JOBS(n_replications=n_reps)
+    dimx = 17  # JOBS has 17 features
+    num_replications = n_reps
+    print('Using JOBS: {} replications (separate mode)'.format(n_reps))
 elif args.dataset == 'twins':
-    dataset = TWINS()
-    dimx = 50  # Will be determined from data
-    num_replications = 1
+    n_reps = args.n_reps if args.n_reps else 10
+    dataset = TWINS(n_replications=n_reps)
+    dimx = 47  # TWINS has 47 features (after removing infant_id columns)
+    num_replications = n_reps
+    print('Using TWINS: {} replications (separate mode)'.format(n_reps))
 
 # Model save path based on dataset
-model_path = 'models/cevae_{}'.format(args.dataset)
+# Create models directory if it doesn't exist
+if not os.path.exists('models'):
+    os.makedirs('models')
+    print('Created models/ directory for saving trained models')
+
+# Base model path - will be extended with replication index if needed
+model_base_path = 'models/cevae_{}'.format(args.dataset)
 
 scores = np.zeros((num_replications, 3))
 scores_test = np.zeros((num_replications, 3))
@@ -69,8 +107,150 @@ d = 20  # latent dimension
 lamba = 1e-4  # weight decay
 nh, h = 3, 200  # number and size of hidden layers
 
+# Record start time
+start_time = datetime.now()
+print('Training started at: {}'.format(start_time.strftime('%Y-%m-%d %H:%M:%S')))
+
+def save_results_to_file(dataset_name, num_replications, start_time, end_time,
+                          train_scores, test_scores, args, epoch_outputs_list, has_true_ate=False):
+    """Save training results to a formatted file following the template"""
+    # Ensure record directory exists
+    if not os.path.exists('record'):
+        os.makedirs('record')
+
+    # Generate filename
+    timestamp = end_time.strftime('%Y%m%d_%H%M%S')
+    filename = 'record/{}_separate_{}.txt'.format(dataset_name, timestamp)
+
+    # Calculate duration
+    duration = end_time - start_time
+    hours, remainder = divmod(duration.total_seconds(), 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    # Calculate statistics
+    train_mean = np.mean(train_scores, axis=0)
+    train_std = sem(train_scores, axis=0) if num_replications > 1 else np.zeros(3)
+    test_mean = np.mean(test_scores, axis=0)
+    test_std = sem(test_scores, axis=0) if num_replications > 1 else np.zeros(3)
+
+    # Check if dataset has counterfactuals
+    has_cf = test_scores[0, 0] < 10  # ITE/ATE/PEHE are usually >10 when they're actually RMSE placeholders
+
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write('=' * 80 + '\n')
+        f.write('CEVAE 实验记录\n')
+        f.write('=' * 80 + '\n\n')
+
+        f.write('-' * 80 + '\n')
+        f.write('【实验配置】\n')
+        f.write('-' * 80 + '\n')
+        f.write('数据集:           {}\n'.format(dataset_name.upper()))
+        f.write('模式:              separate (每个replication独立训练)\n')
+        f.write('Replications:      {}\n'.format(num_replications))
+        f.write('Epochs:           {}\n'.format(args.epochs))
+        f.write('学习率:           {}\n'.format(args.lr))
+        f.write('优化器:           {}\n'.format(args.opt))
+        f.write('早停检查频率:      {}\n'.format(args.earl))
+        f.write('输出频率:          {}\n'.format(args.print_every))
+        f.write('\n')
+        f.write('开始时间:          {}\n'.format(start_time.strftime('%Y-%m-%d %H:%M:%S')))
+        f.write('结束时间:          {}\n'.format(end_time.strftime('%Y-%m-%d %H:%M:%S')))
+        f.write('总耗时:            {}小时 {}分钟 {:.0f}秒\n'.format(int(hours), int(minutes), seconds))
+        f.write('-' * 80 + '\n\n')
+
+        f.write('-' * 80 + '\n')
+        f.write('【最终结果】\n')
+        f.write('-' * 80 + '\n\n')
+
+        f.write('CEVAE model total scores on {}\n\n'.format(dataset_name.upper()))
+
+        if has_cf:
+            f.write('训练集:\n')
+            f.write('- ITE:  {:.3f} ± {:.3f}\n'.format(train_mean[0], train_std[0]))
+            f.write('- ATE:  {:.3f} ± {:.3f}\n'.format(train_mean[1], train_std[1]))
+            f.write('- PEHE: {:.3f} ± {:.3f}\n\n'.format(train_mean[2], train_std[2]))
+
+            f.write('测试集:\n')
+            f.write('- ITE:  {:.3f} ± {:.3f}\n'.format(test_mean[0], test_std[0]))
+            f.write('- ATE:  {:.3f} ± {:.3f}\n'.format(test_mean[1], test_std[1]))
+            f.write('- PEHE: {:.3f} ± {:.3f}\n\n'.format(test_mean[2], test_std[2]))
+        elif has_true_ate:
+            f.write('注意: 此数据集有真实ATE值，但没有反事实标签\n')
+            f.write('返回指标: [RMSE占位符, ATE误差, RMSE占位符]\n\n')
+            f.write('训练集:\n')
+            f.write('- ATE误差:  {:.3f} ± {:.3f}\n\n'.format(train_mean[1], train_std[1]))
+            f.write('测试集:\n')
+            f.write('- ATE误差:  {:.3f} ± {:.3f}\n\n'.format(test_mean[1], test_std[1]))
+        else:
+            f.write('注意: 此数据集没有反事实标签，以下指标为事实结果RMSE\n\n')
+            f.write('训练集:\n')
+            f.write('- RMSE: {:.3f} ± {:.3f}\n\n'.format(train_mean[0], train_std[0]))
+            f.write('测试集:\n')
+            f.write('- RMSE: {:.3f} ± {:.3f}\n\n'.format(test_mean[0], test_std[0]))
+
+        f.write('-' * 80 + '\n')
+        f.write('【每个Replication详细结果】\n')
+        f.write('-' * 80 + '\n\n')
+
+        for i, (tr_s, te_s) in enumerate(zip(train_scores, test_scores)):
+            f.write('Replication {}/{}:\n'.format(i+1, num_replications))
+            if has_cf:
+                f.write('  Train - ITE: {:.3f}, ATE: {:.3f}, PEHE: {:.3f}\n'.format(tr_s[0], tr_s[1], tr_s[2]))
+                f.write('  Test  - ITE: {:.3f}, ATE: {:.3f}, PEHE: {:.3f}\n'.format(te_s[0], te_s[1], te_s[2]))
+            elif has_true_ate:
+                f.write('  Train - ATE误差: {:.3f}\n'.format(tr_s[1]))
+                f.write('  Test  - ATE误差: {:.3f}\n'.format(te_s[1]))
+            else:
+                f.write('  Train - RMSE: {:.3f}\n'.format(tr_s[0]))
+                f.write('  Test  - RMSE: {:.3f}\n'.format(te_s[0]))
+            f.write('\n')
+
+        f.write('-' * 80 + '\n')
+        f.write('【训练过程摘要】\n')
+        f.write('-' * 80 + '\n\n')
+
+        # Sample some epoch outputs
+        sample_epochs = min(10, len(epoch_outputs_list))
+        step = len(epoch_outputs_list) // sample_epochs if sample_epochs > 0 else 0
+
+        f.write('关键训练节点输出 (共{}个epoch，显示其中{}个):\n\n'.format(len(epoch_outputs_list), sample_epochs))
+        for idx in range(0, len(epoch_outputs_list), max(1, len(epoch_outputs_list) // sample_epochs)):
+            f.write('[Epoch {}]\n{}\n'.format(idx + 1, epoch_outputs_list[idx]))
+
+        f.write('-' * 80 + '\n')
+        f.write('【模型保存位置】\n')
+        f.write('-' * 80 + '\n\n')
+
+        if num_replications > 1:
+            f.write('models/cevae_{}/\n'.format(dataset_name))
+            f.write('├── cevae_{}_rep001/\n'.format(dataset_name))
+            f.write('├── cevae_{}_rep002/\n'.format(dataset_name))
+            f.write('├── ...\n')
+            f.write('└── cevae_{}_rep{:03d}/\n\n'.format(dataset_name, num_replications))
+        else:
+            f.write('models/cevae_{}/\n\n'.format(dataset_name))
+
+        f.write('=' * 80 + '\n')
+
+    print('\n' + '=' * 60)
+    print('实验结果已保存到: {}'.format(filename))
+    print('=' * 60)
+
+    return filename
+
+
 for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_valid_test()):
     print('\nReplication {}/{}'.format(i + 1, num_replications))
+
+    # Determine model path for this replication
+    # For multi-replication datasets, save each replication separately
+    if num_replications > 1:
+        model_path = '{}_rep{:03d}'.format(model_base_path, i + 1)
+        print('Model will be saved to: {}'.format(model_path))
+    else:
+        model_path = model_base_path
+        print('Model will be saved to: {}'.format(model_path))
+
     (xtr, ttr, ytr), (y_cftr, mu0tr, mu1tr) = train
     (xva, tva, yva), (y_cfva, mu0va, mu1va) = valid
     (xte, tte, yte), (y_cfte, mu0te, mu1te) = test
@@ -78,12 +258,19 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
     # Check if dataset has counterfactuals
     has_counterfactuals = (y_cfte is not None and mu0te is not None and mu1te is not None)
 
+    # Get true ATE if available (for datasets like JOBS)
+    true_ate = getattr(dataset, 'true_ate', None)
+
     if has_counterfactuals:
         evaluator_test = Evaluator(yte, tte, y_cf=y_cfte, mu0=mu0te, mu1=mu1te)
     else:
-        # For datasets without counterfactuals, create a simplified evaluator
-        print('Warning: Dataset has no counterfactuals, only computing basic metrics')
-        evaluator_test = Evaluator(yte, tte)
+        # For datasets without counterfactuals (like JOBS), pass true_ate if available
+        if true_ate is not None:
+            print('Dataset has true ATE ({:.4f}), computing ATE error'.format(true_ate))
+            evaluator_test = Evaluator(yte, tte, true_ate=true_ate)
+        else:
+            print('Warning: Dataset has no counterfactuals and no true ATE, only computing RMSE')
+            evaluator_test = Evaluator(yte, tte)
 
     # reorder features with binary first and continuous after
     perm = binfeats + contfeats
@@ -95,7 +282,11 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
         evaluator_train = Evaluator(yalltr, talltr, y_cf=np.concatenate([y_cftr, y_cfva], axis=0),
                                     mu0=np.concatenate([mu0tr, mu0va], axis=0), mu1=np.concatenate([mu1tr, mu1va], axis=0))
     else:
-        evaluator_train = Evaluator(yalltr, talltr)
+        # For datasets without counterfactuals (like JOBS), pass true_ate if available
+        if true_ate is not None:
+            evaluator_train = Evaluator(yalltr, talltr, true_ate=true_ate)
+        else:
+            evaluator_train = Evaluator(yalltr, talltr)
 
     # zero mean, unit variance for y during training
     ym, ys = np.mean(ytr), np.std(ytr)
@@ -103,7 +294,7 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
     best_logpvalid = - np.inf
 
     with tf.Graph().as_default():
-        sess = tf.InteractiveSession()
+        sess = tf.InteractiveSession(config=config)
 
         ed.set_seed(1)
         np.random.seed(1)
@@ -221,6 +412,10 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
                     print('Improved validation bound, old: {:0.3f}, new: {:0.3f}'.format(best_logpvalid, logpvalid))
                     best_logpvalid = logpvalid
                     saver.save(sess, model_path)
+                # Always save model at the last epoch to ensure we have a checkpoint to restore
+                if epoch == (n_epoch - 1):
+                    print('Saving final model at epoch {}'.format(epoch + 1))
+                    saver.save(sess, model_path)
 
             if epoch % args.print_every == 0:
                 y0, y1 = get_y0_y1(sess, y_post, f0, f1, shape=yalltr.shape, L=1)
@@ -232,11 +427,24 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
                 y0, y1 = y0 * ys + ym, y1 * ys + ym
                 score_test = evaluator_test.calc_stats(y1, y0)
 
-                print("Epoch: {}/{}, log p(x) >= {:0.3f}, ite_tr: {:0.3f}, ate_tr: {:0.3f}, pehe_tr: {:0.3f}, " \
-                      "rmse_f_tr: {:0.3f}, rmse_cf_tr: {:0.3f}, ite_te: {:0.3f}, ate_te: {:0.3f}, pehe_te: {:0.3f}, " \
-                      "dt: {:0.3f}".format(epoch + 1, n_epoch, avg_loss, score_train[0], score_train[1], score_train[2],
-                                           rmses_train[0], rmses_train[1], score_test[0], score_test[1], score_test[2],
-                                           time.time() - t0))
+                # Handle datasets without counterfactuals
+                rmse_f_tr = rmses_train[0] if rmses_train[1] is not None else score_train[0]
+                rmse_cf_tr = rmses_train[1] if rmses_train[1] is not None else score_train[0]
+
+                # Format output based on dataset type
+                if true_ate is not None:
+                    # JOBS dataset: only ATE error is meaningful
+                    epoch_output = "Epoch: {}/{}, log p(x) >= {:0.3f}, ate_err_tr: {:0.3f}, ate_err_te: {:0.3f}, dt: {:0.3f}".format(
+                        epoch + 1, n_epoch, avg_loss, score_train[1], score_test[1], time.time() - t0)
+                else:
+                    # Standard or RMSE-only datasets
+                    epoch_output = "Epoch: {}/{}, log p(x) >= {:0.3f}, ite_tr: {:0.3f}, ate_tr: {:0.3f}, pehe_tr: {:0.3f}, " \
+                                  "rmse_f_tr: {:0.3f}, rmse_cf_tr: {:0.3f}, ite_te: {:0.3f}, ate_te: {:0.3f}, pehe_te: {:0.3f}, " \
+                                  "dt: {:0.3f}".format(epoch + 1, n_epoch, avg_loss, score_train[0], score_train[1], score_train[2],
+                                               rmse_f_tr, rmse_cf_tr, score_test[0], score_test[1], score_test[2],
+                                               time.time() - t0)
+                print(epoch_output)
+                epoch_outputs.append(epoch_output)
 
         saver.restore(sess, model_path)
         y0, y1 = get_y0_y1(sess, y_post, f0, f1, shape=yalltr.shape, L=100)
@@ -249,27 +457,65 @@ for i, (train, valid, test, contfeats, binfeats) in enumerate(dataset.get_train_
         score_test = evaluator_test.calc_stats(y1t, y0t)
         scores_test[i, :] = score_test
 
-        print('Replication: {}/{}, tr_ite: {:0.3f}, tr_ate: {:0.3f}, tr_pehe: {:0.3f}' \
-              ', te_ite: {:0.3f}, te_ate: {:0.3f}, te_pehe: {:0.3f}'.format(i + 1, num_replications,
-                                                                            score[0], score[1], score[2],
-                                                                            score_test[0], score_test[1], score_test[2]))
+        # Format replication output based on dataset type
+        if true_ate is not None:
+            rep_output = 'Replication: {}/{}, tr_ate_err: {:0.3f}, te_ate_err: {:0.3f}'.format(
+                i + 1, num_replications, score[1], score_test[1])
+        else:
+            rep_output = 'Replication: {}/{}, tr_ite: {:0.3f}, tr_ate: {:0.3f}, tr_pehe: {:0.3f}' \
+                         ', te_ite: {:0.3f}, te_ate: {:0.3f}, te_pehe: {:0.3f}'.format(i + 1, num_replications,
+                                                                                score[0], score[1], score[2],
+                                                                                score_test[0], score_test[1], score_test[2])
+        print(rep_output)
+        replication_results.append(rep_output)
         sess.close()
 
 print('CEVAE model total scores on {}'.format(args.dataset.upper()))
+
+# Check if dataset has true ATE (like JOBS)
+has_true_ate = hasattr(dataset, 'true_ate') and dataset.true_ate is not None
+
 means = np.mean(scores, axis=0)
-if num_replications > 1:
-    stds = sem(scores, axis=0)
-    print('train ITE: {:.3f}+-{:.3f}, train ATE: {:.3f}+-{:.3f}, train PEHE: {:.3f}+-{:.3f}' \
-          ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))
+if has_true_ate:
+    # JOBS dataset: only show ATE error
+    if num_replications > 1:
+        stds = sem(scores, axis=0)
+        print('train ATE error: {:.3f}+-{:.3f}'.format(means[1], stds[1]))
+    else:
+        print('train ATE error: {:.3f}'.format(means[1]))
 else:
-    print('train ITE: {:.3f}, train ATE: {:.3f}, train PEHE: {:.3f}' \
-          ''.format(means[0], means[1], means[2]))
+    # Standard datasets
+    if num_replications > 1:
+        stds = sem(scores, axis=0)
+        print('train ITE: {:.3f}+-{:.3f}, train ATE: {:.3f}+-{:.3f}, train PEHE: {:.3f}+-{:.3f}' \
+              ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))
+    else:
+        print('train ITE: {:.3f}, train ATE: {:.3f}, train PEHE: {:.3f}' \
+              ''.format(means[0], means[1], means[2]))
 
 means = np.mean(scores_test, axis=0)
-if num_replications > 1:
-    stds = sem(scores_test, axis=0)
-    print('test ITE: {:.3f}+-{:.3f}, test ATE: {:.3f}+-{:.3f}, test PEHE: {:.3f}+-{:.3f}' \
-          ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))
+if has_true_ate:
+    # JOBS dataset: only show ATE error
+    if num_replications > 1:
+        stds = sem(scores_test, axis=0)
+        print('test ATE error: {:.3f}+-{:.3f}'.format(means[1], stds[1]))
+    else:
+        print('test ATE error: {:.3f}'.format(means[1]))
 else:
-    print('test ITE: {:.3f}, test ATE: {:.3f}, test PEHE: {:.3f}' \
-          ''.format(means[0], means[1], means[2]))
+    # Standard datasets
+    if num_replications > 1:
+        stds = sem(scores_test, axis=0)
+        print('test ITE: {:.3f}+-{:.3f}, test ATE: {:.3f}+-{:.3f}, test PEHE: {:.3f}+-{:.3f}' \
+              ''.format(means[0], stds[0], means[1], stds[1], means[2], stds[2]))
+    else:
+        print('test ITE: {:.3f}, test ATE: {:.3f}, test PEHE: {:.3f}' \
+              ''.format(means[0], means[1], means[2]))
+
+# Record end time and save results
+end_time = datetime.now()
+print('Training completed at: {}'.format(end_time.strftime('%Y-%m-%d %H:%M:%S')))
+
+# Save results to file following template format
+has_true_ate = hasattr(dataset, 'true_ate') and dataset.true_ate is not None
+save_results_to_file(args.dataset, num_replications, start_time, end_time,
+                      scores, scores_test, args, epoch_outputs, has_true_ate)

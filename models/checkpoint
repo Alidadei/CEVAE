@@ -1,2 +1,2 @@
-model_checkpoint_path: "cevae_ihdp1000"
-all_model_checkpoint_paths: "cevae_ihdp1000"
+model_checkpoint_path: "cevae_twins_rep006"
+all_model_checkpoint_paths: "cevae_twins_rep006"
